@@ -372,6 +372,7 @@ private struct TabStrip: View {
             case .video: return "film"
             case .audio: return "waveform"
             case .pdf: return "doc.richtext"
+            case .html: return "globe"
             case .other: return "doc"
             }
         case .graph: return "point.3.filled.connected.trianglepath.dotted"

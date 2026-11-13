@@ -2,6 +2,7 @@ import AVKit
 import AvenraCore
 import PDFKit
 import SwiftUI
+import WebKit
 
 /// A vault file shown rather than edited.
 ///
@@ -23,6 +24,7 @@ struct AttachmentView: View {
             switch kind {
             case .image: image
             case .pdf: PDFPreview(url: url)
+            case .html: HTMLPreview(url: url)
             case .audio, .video: VideoPlayer(player: AVPlayer(url: url))
             case .other: unsupported
             }
@@ -115,5 +117,109 @@ extension PDFPreview {
 
     fileprivate func reload(_ view: PDFView) {
         if view.document?.documentURL != url { view.document = PDFDocument(url: url) }
+    }
+}
+
+/// Read-only vault HTML. Relative CSS and images beside the file resolve;
+/// http(s) links leave the app rather than turning this into a browser.
+private struct HTMLPreview {
+    let url: URL
+}
+
+#if os(macOS)
+extension HTMLPreview: NSViewRepresentable {
+    func makeNSView(context: Context) -> WKWebView {
+        let view = WKWebView(frame: .zero, configuration: Self.configuration())
+        view.navigationDelegate = context.coordinator
+        reload(view)
+        return view
+    }
+
+    func updateNSView(_ view: WKWebView, context: Context) {
+        context.coordinator.rootDirectory = url.deletingLastPathComponent()
+        reload(view)
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator(rootDirectory: url.deletingLastPathComponent()) }
+}
+#else
+extension HTMLPreview: UIViewRepresentable {
+    func makeUIView(context: Context) -> WKWebView {
+        let view = WKWebView(frame: .zero, configuration: Self.configuration())
+        view.navigationDelegate = context.coordinator
+        reload(view)
+        return view
+    }
+
+    func updateUIView(_ view: WKWebView, context: Context) {
+        context.coordinator.rootDirectory = url.deletingLastPathComponent()
+        reload(view)
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator(rootDirectory: url.deletingLastPathComponent()) }
+}
+#endif
+
+extension HTMLPreview {
+    fileprivate static func configuration() -> WKWebViewConfiguration {
+        let configuration = WKWebViewConfiguration()
+        configuration.defaultWebpagePreferences.allowsContentJavaScript = true
+        return configuration
+    }
+
+    fileprivate func reload(_ view: WKWebView) {
+        if view.url == url { return }
+        view.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
+    }
+
+    final class Coordinator: NSObject, WKNavigationDelegate {
+        var rootDirectory: URL
+
+        init(rootDirectory: URL) {
+            self.rootDirectory = rootDirectory
+        }
+
+        func webView(
+            _ webView: WKWebView,
+            decidePolicyFor navigationAction: WKNavigationAction,
+            decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+        ) {
+            guard let requestURL = navigationAction.request.url else {
+                decisionHandler(.allow)
+                return
+            }
+
+            if Self.isHTTP(requestURL) {
+                #if os(macOS)
+                NSWorkspace.shared.open(requestURL)
+                #else
+                UIApplication.shared.open(requestURL)
+                #endif
+                decisionHandler(.cancel)
+                return
+            }
+
+            if requestURL.isFileURL {
+                let root = rootDirectory.standardizedFileURL.path
+                let target = requestURL.standardizedFileURL.path
+                if target == root || target.hasPrefix(root + "/") {
+                    decisionHandler(.allow)
+                    return
+                }
+            }
+
+            // Fragment-only / about:blank / unexpected schemes stay in-place when
+            // WebKit asks; anything else is refused rather than fetched in-app.
+            if requestURL.scheme == nil || requestURL.scheme == "about" {
+                decisionHandler(.allow)
+                return
+            }
+            decisionHandler(.cancel)
+        }
+
+        private static func isHTTP(_ url: URL) -> Bool {
+            guard let scheme = url.scheme?.lowercased() else { return false }
+            return scheme == "http" || scheme == "https"
+        }
     }
 }

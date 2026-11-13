@@ -463,6 +463,7 @@ private struct FileRow: View {
         case "canvas": return "square.on.circle"
         case "png", "jpg", "jpeg", "gif", "webp", "heic", "svg": return "photo"
         case "pdf": return "doc.richtext"
+        case "html", "htm": return "globe"
         case "mp3", "m4a", "wav": return "waveform"
         case "mp4", "mov": return "film"
         default: return "doc"

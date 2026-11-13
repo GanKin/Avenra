@@ -21,6 +21,8 @@ struct FileOpeningTests {
         #expect(decide("Clip.mp4") == .preview(.video))
         #expect(decide("Take.m4a") == .preview(.audio))
         #expect(decide("Paper.pdf") == .preview(.pdf))
+        #expect(decide("page.html") == .preview(.html))
+        #expect(decide("Index.HTM") == .preview(.html))
         #expect(decide("Map.canvas") == .canvas)
     }
 
