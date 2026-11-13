@@ -1,13 +1,13 @@
 #if DEBUG && os(macOS)
 import Foundation
-import InkstoneCore
+import AvenraCore
 
 /// Drives the real app through a real vault, from the command line.
 ///
-///     INKSTONE_SMOKE=1 .../Inkstone.app/Contents/MacOS/Inkstone
+///     AVENRA_SMOKE=1 .../Avenra.app/Contents/MacOS/Avenra
 ///
 /// Why this exists rather than more unit tests: `Workspace` lives in the app
-/// target, not in `InkstoneCore`, so the package's suite cannot reach it. It is
+/// target, not in `AvenraCore`, so the package's suite cannot reach it. It is
 /// also the layer where the two sync incidents actually happened — the binding,
 /// the git guard, opening and forgetting vaults. Everything below runs against
 /// files on disk in a temporary directory, through the same object the UI uses.
@@ -26,7 +26,7 @@ enum SmokeTest {
     }
 
     static func runIfRequested() {
-        guard ProcessInfo.processInfo.environment["INKSTONE_SMOKE"] != nil else { return }
+        guard ProcessInfo.processInfo.environment["AVENRA_SMOKE"] != nil else { return }
         Task { @MainActor in
             await run()
             print(failures == 0
@@ -38,7 +38,7 @@ enum SmokeTest {
 
     private static func run() async {
         let root = URL(fileURLWithPath: NSTemporaryDirectory())
-            .appending(path: "inkstone-smoke-\(UUID().uuidString)")
+            .appending(path: "avenra-smoke-\(UUID().uuidString)")
         try? FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: root) }
 
@@ -46,7 +46,7 @@ enum SmokeTest {
         // whoever is using the app; a smoke run must not touch them, and in
         // particular must not leave a temporary folder in someone's vault list
         // or a repository binding in their settings.
-        let suiteName = "com.orris.inkstone.smoke"
+        let suiteName = "com.gankin.avenra.smoke"
         guard let defaults = UserDefaults(suiteName: suiteName) else {
             check("open an isolated defaults suite", false)
             return
@@ -212,15 +212,15 @@ enum SmokeTest {
         // enough for Swift to store inline rather than as literals, so grepping
         // the shipped binary for them finds nothing and proves nothing.
         let expected: [(String, String)] = [
-            ("en_AU", "https://inkslab.app/sync.html"),
-            ("zh-Hans", "https://inkslab.app/zh/sync.html"),
-            ("zh-Hant", "https://inkslab.app/zh-Hant/sync.html"),
+            ("en_AU", "https://gankin.github.io/Avenra/sync.html"),
+            ("zh-Hans", "https://gankin.github.io/Avenra/zh/sync.html"),
+            ("zh-Hant", "https://gankin.github.io/Avenra/zh-Hant/sync.html"),
             // Region rather than script: the script is the half that decides
             // which page a reader can actually read.
-            ("zh-TW", "https://inkslab.app/zh-Hant/sync.html"),
-            ("zh-CN", "https://inkslab.app/zh/sync.html"),
-            ("zh-HK", "https://inkslab.app/zh-Hant/sync.html"),
-            ("fr_FR", "https://inkslab.app/sync.html"),
+            ("zh-TW", "https://gankin.github.io/Avenra/zh-Hant/sync.html"),
+            ("zh-CN", "https://gankin.github.io/Avenra/zh/sync.html"),
+            ("zh-HK", "https://gankin.github.io/Avenra/zh-Hant/sync.html"),
+            ("fr_FR", "https://gankin.github.io/Avenra/sync.html"),
         ]
         for (identifier, url) in expected {
             let got = SyncHelp.url(for: Locale(identifier: identifier)).absoluteString

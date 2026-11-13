@@ -1,7 +1,7 @@
 # Team and identifiers. The bundle ID is already registered in the Developer
 # Portal; what does not exist yet is the App Store Connect *app record*, which
 # is what `fastlane create_app` makes.
-app_identifier("com.orris.inkstone")
+app_identifier("com.gankin.avenra")
 apple_id("iamzifei@gmail.com")
 team_id("K9YT36SP4B")          # Developer Portal team
 

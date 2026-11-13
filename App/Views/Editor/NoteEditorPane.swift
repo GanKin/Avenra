@@ -1,5 +1,5 @@
 import SwiftUI
-import InkstoneCore
+import AvenraCore
 
 /// The note editing surface: title bar, editor, and status line.
 struct NoteEditorPane: View {

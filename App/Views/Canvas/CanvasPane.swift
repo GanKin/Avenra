@@ -1,5 +1,5 @@
 import SwiftUI
-import InkstoneCore
+import AvenraCore
 
 /// Infinite canvas editor for `.canvas` files (JSON Canvas 1.0).
 ///

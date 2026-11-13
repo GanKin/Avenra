@@ -1,5 +1,5 @@
 import Foundation
-import InkstoneCore
+import AvenraCore
 
 /// Owns the semantic index for the open vault and keeps it current.
 ///
@@ -39,7 +39,7 @@ final class SemanticSearchService {
         }
     }
 
-    private static let enabledKey = "com.orris.inkstone.semantic.enabled"
+    private static let enabledKey = "com.gankin.avenra.semantic.enabled"
 
     init() {
         isEnabled = UserDefaults.standard.bool(forKey: Self.enabledKey)

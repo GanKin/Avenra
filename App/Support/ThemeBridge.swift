@@ -1,5 +1,5 @@
 import SwiftUI
-import InkstoneCore
+import AvenraCore
 
 #if os(macOS)
 import AppKit
@@ -123,7 +123,7 @@ struct Style: Sendable {
     }
 
     static let fallback = Style(
-        palette: Theme.inkstone.light,
+        palette: Theme.avenra.light,
         typography: Typography(),
         isDark: false
     )

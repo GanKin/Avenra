@@ -54,7 +54,7 @@ Entities we do not decode stay exactly as written: &fjlig; &notreal;
 
 # 3 · Links 链接
 
-Inline link: [Inkstone repository](https://github.com/iamzifei/inkstone)
+Inline link: [Avenra repository](https://github.com/GanKin/Avenra)
 Link with title: [with a title](https://example.com "the title")
 Autolink: <https://example.com>
 Bare URL: https://example.com
@@ -220,8 +220,8 @@ Nested tasks mixed with bullets:
 Fenced with a language:
 
 ```swift
-struct Inkstone {
-    let name = "墨砚"
+struct Avenra {
+    let name = "思野"
     // #nottag and [[notlink]] and $notmath$ must stay plain inside code
     func greet() -> String { "Hello, 世界" }
 }

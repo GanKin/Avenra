@@ -13,7 +13,7 @@ tags: [moc, 入口]
 - [[Typography Notes]] — 中英文混排到底难在哪
 - [[The Measure]] — 一行该有多长
 - [[Graph Thinking]] — 链接会长出你没规划过的结构
-- [[Projects/Inkstone]]
+- [[Projects/Avenra]]
 
 ## 最近
 

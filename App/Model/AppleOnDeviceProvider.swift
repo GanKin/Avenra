@@ -1,6 +1,6 @@
 import Foundation
 import FoundationModels
-import InkstoneCore
+import AvenraCore
 
 /// Apple's on-device model, behind the same protocol as the network providers.
 ///

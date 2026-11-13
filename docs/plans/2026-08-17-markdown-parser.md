@@ -18,7 +18,7 @@ better one already sitting in the dependency list unused.
 | `EditorRenderer` | ~420 lines | Paints what attributes cannot express |
 
 `swift-markdown` — Apple's wrapper around cmark-gfm — is declared as a
-dependency of InkstoneCore and **imported nowhere**. `import Markdown` appears 0
+dependency of AvenraCore and **imported nowhere**. `import Markdown` appears 0
 times in the project. The comment above it in `Package.swift` claims it "gives
 us GitHub Flavored Markdown for free"; none of that was ever collected.
 

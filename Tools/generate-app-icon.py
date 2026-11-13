@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Builds Inkstone's app icon for macOS 26 and iOS 26.
+Builds Avenra's app icon for macOS 26 and iOS 26.
 
     python3 Tools/generate-app-icon.py
 
-The mark is an inkstone seen from above — a dark disc with a crescent ink pool —
+The mark is an avenra seen from above — a dark disc with a crescent ink pool —
 and a cinnabar seal resting on its lower right. Drawn geometrically rather than
 rendered: since macOS 26 and iOS 26 unified on one rounded-rectangle silhouette
 with Liquid Glass treatment applied by the system, an icon wants flat, confident
@@ -19,7 +19,7 @@ Outputs three iOS appearances plus the macOS size ladder:
               it must read through luminance alone, with no colour to lean on
 
 Regenerate whenever the accent colour changes. Cinnabar #C0453B is the app's
-accent; icon and UI share it (see Theme.inkstone).
+accent; icon and UI share it (see Theme.avenra).
 """
 
 from __future__ import annotations
@@ -38,9 +38,9 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 ICONSET = ROOT / "App/Resources/Assets.xcassets/AppIcon.appiconset"
 
 # Geometry in the 1024 design space.
-DISC = (188, 172, 812, 796)          # the inkstone
+DISC = (188, 172, 812, 796)          # the avenra
 # The ink well is the *upper third* of the stone, cut off by a single arc — the
-# way a round inkstone's 墨堂 actually looks from above. An earlier draft used a
+# way a round avenra's 墨堂 actually looks from above. An earlier draft used a
 # thin crescent, which read as an eyebrow and made the whole icon a cartoon face.
 POOL_CUT = (60, -300, 940, 470)      # big ellipse; its lower arc slices the disc
 SEAL = (556, 556, 856, 856)
@@ -109,7 +109,7 @@ def render(palette: dict) -> Image.Image:
 
     # --- Ink pool --------------------------------------------------------
     # A crescent, not a full ellipse. The crescent is what identifies an
-    # inkstone; a filled ellipse reads as a screen or a camera lens.
+    # avenra; a filled ellipse reads as a screen or a camera lens.
     pool = ImageChops.multiply(
         mask_from(lambda d: d.ellipse(scaled(POOL_CUT), fill=255)),
         disc,

@@ -20,8 +20,8 @@
 #
 # So one interactive step remains, exactly once:
 #
-#     asc apps create --name "Inkstone" --bundle-id com.orris.inkstone \
-#       --sku inkstone --platform IOS --primary-locale en-US \
+#     asc apps create --name "Avenra" --bundle-id com.gankin.avenra \
+#       --sku avenra --platform IOS --primary-locale en-US \
 #       --apple-id iamzifei@gmail.com
 #
 # After that this script needs nobody. The metadata is read from
@@ -31,8 +31,8 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-BUNDLE_ID="com.orris.inkstone"
-IPA=".build-ios-release/export/Inkstone.ipa"
+BUNDLE_ID="com.gankin.avenra"
+IPA=".build-ios-release/export/Avenra.ipa"
 META="fastlane/metadata/en-US"
 SHOTS="assets/store-shots"
 LOCALE="en-US"
@@ -50,13 +50,13 @@ APP_ID="$(asc apps list --bundle-id "$BUNDLE_ID" 2>/dev/null \
 
 if [[ -z "$APP_ID" ]]; then
   cat >&2 <<'MSG'
-No App Store Connect record for com.orris.inkstone.
+No App Store Connect record for com.gankin.avenra.
 
 This is the one step that cannot be scripted — app creation does not go through
 the App Store Connect API and needs an Apple ID with 2FA. Run this once:
 
-  asc apps create --name "Inkstone" --bundle-id com.orris.inkstone \
-    --sku inkstone --platform IOS --primary-locale en-US \
+  asc apps create --name "Avenra" --bundle-id com.gankin.avenra \
+    --sku avenra --platform IOS --primary-locale en-US \
     --apple-id iamzifei@gmail.com
 
 then run this script again.

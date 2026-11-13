@@ -1,4 +1,4 @@
-import InkstoneCore
+import AvenraCore
 import SwiftUI
 
 /// Earlier states of one note, and a way back to any of them.

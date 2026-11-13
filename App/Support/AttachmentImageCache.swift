@@ -1,5 +1,5 @@
 import Foundation
-import InkstoneCore
+import AvenraCore
 import PDFKit
 
 #if os(macOS)

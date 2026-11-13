@@ -1,5 +1,5 @@
 import Foundation
-import InkstoneCore
+import AvenraCore
 
 #if os(macOS)
 import AppKit
@@ -10,7 +10,7 @@ import UIKit
 /// The properties table drawn where a note's YAML frontmatter is.
 ///
 /// Obsidian shows frontmatter as a properties table at the top of the note, in
-/// both Live Preview and Reading view. Inkstone concealed it outright and put
+/// both Live Preview and Reading view. Avenra concealed it outright and put
 /// the properties in the inspector instead — so a note's tags, aliases and
 /// status were invisible unless a side panel happened to be open, and the
 /// `showFrontmatterAsProperties` setting (on by default) was wired to nothing at

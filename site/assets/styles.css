@@ -1,5 +1,5 @@
 @charset "utf-8";
-/* Inkstone — inkslab.app
+/* Avenra — gankin.github.io/Avenra
  *
  * The page is a book page before it is a landing page. Three ideas hold it up:
  *
@@ -19,7 +19,7 @@
 /* ------------------------------------------------------------------ tokens */
 
 :root {
-  /* Light: the app's `Theme.inkstone` light palette, hex for hex. */
+  /* Light: the app's `Theme.avenra` light palette, hex for hex. */
   --paper:        #FCFBF8;
   --paper-2:      #F4F2EC;
   --ink:          #1F1D1A;
@@ -239,7 +239,7 @@ p, li, h1, h2, h3, dd, dt, blockquote, figcaption, td, th {
   font-family: var(--cjk);
   font-size: .82rem;
   color: var(--ink-faint);
-  letter-spacing: .22em;   /* 墨砚 as a colophon stamp, not as a word */
+  letter-spacing: .22em;   /* 思野 as a colophon stamp, not as a word */
   padding-inline-start: .1rem;
 }
 

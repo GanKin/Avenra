@@ -1,5 +1,5 @@
 import Foundation
-import InkstoneCore
+import AvenraCore
 
 /// Carries the GitHub setup between the user's devices through iCloud's
 /// key-value store.
@@ -12,7 +12,7 @@ import InkstoneCore
 /// the token through iCloud Keychain.
 enum SharedSyncConfiguration {
 
-    private static let key = "com.orris.inkstone.github-sync"
+    private static let key = "com.gankin.avenra.github-sync"
 
     /// Whether this launch is a throwaway one, for screenshots or a smoke run.
     ///
@@ -28,7 +28,7 @@ enum SharedSyncConfiguration {
     /// propagate an invented repository to the user's own devices.
     private static var isDemoLaunch: Bool {
         #if DEBUG
-        return ProcessInfo.processInfo.environment["INKSTONE_DEMO_DEFAULTS"] != nil
+        return ProcessInfo.processInfo.environment["AVENRA_DEMO_DEFAULTS"] != nil
         #else
         return false
         #endif

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the Inkstone website from per-language content files into site/_site/.
+"""Build the Avenra website from per-language content files into site/_site/.
 
 Structure lives here, copy lives in site/content/<lang>/index.yml. That split is
 the point: eight languages of a hand-written page drift structurally — one of
@@ -35,20 +35,20 @@ ROOT = Path(__file__).resolve().parent.parent
 CONTENT = ROOT / "site" / "content"
 OUT = ROOT / "site" / "_site"
 
-# Registered 2026-08-20. `inkstone` is the English for 砚 — an ink slab — so the
-# name is a translation rather than a near-miss: inkstone.com/.app/.io/.dev were
-# all taken, and inkstone.md, the one a Markdown app actually wants, had been
+# Registered 2026-08-20. `avenra` is the English for 砚 — an ink slab — so the
+# name is a translation rather than a near-miss: avenra.com/.app/.io/.dev were
+# all taken, and avenra.md, the one a Markdown app actually wants, had been
 # registered three weeks earlier on 2026-07-31.
-SITE = "https://inkslab.app"
-REPO = "https://github.com/iamzifei/inkstone"
+SITE = "https://gankin.github.io/Avenra"
+REPO = "https://github.com/GanKin/Avenra"
 KOFI = "https://ko-fi.com/james_ai/tip"
 
 # v0.1.0 shipped 2026-08-20: signed, notarised, stapled, and Gatekeeper-accepted.
 # The URL is the `latest` alias rather than a pinned tag, so cutting the next
 # release does not require touching the site. Every release must therefore keep
-# naming its asset `Inkstone.dmg`.
+# naming its asset `Avenra.dmg`.
 HAS_RELEASE = True
-DOWNLOAD = f"{REPO}/releases/latest/download/Inkstone.dmg"
+DOWNLOAD = f"{REPO}/releases/latest/download/Avenra.dmg"
 
 # The other three macOS apps. Someone who liked one is the likeliest person to
 # want another, which is why each site links to the rest rather than to a
@@ -253,8 +253,8 @@ def nav(page: Page, by_slug: dict) -> str:
   <div class="nav-inner">
     <a class="wordmark" href="{home}">
       <img src="{up}assets/icon.png" alt="" width="28" height="28">
-      <span class="wordmark-name">Inkstone</span>
-      <span class="wordmark-cjk" aria-hidden="true">墨砚</span>
+      <span class="wordmark-name">Avenra</span>
+      <span class="wordmark-cjk" aria-hidden="true">思野</span>
     </a>
     <nav class="nav-links" aria-label="{e(get(d, 'nav.label'))}">
       <a href="#features">{e(get(d, 'nav.features'))}</a>
@@ -456,8 +456,8 @@ def json_ld(page: Page) -> str:
     app = {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
-        "name": "Inkstone",
-        "alternateName": "墨砚",
+        "name": "Avenra",
+        "alternateName": "思野",
         "applicationCategory": "ProductivityApplication",
         "operatingSystem": "macOS 26, iOS 26",
         "url": page.url,
@@ -465,7 +465,7 @@ def json_ld(page: Page) -> str:
         "inLanguage": LANGS[page.lang]["hreflang"],
         "isAccessibleForFree": True,
         "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
-        "author": {"@type": "Person", "name": "James Gong", "url": "https://github.com/iamzifei"},
+        "author": {"@type": "Person", "name": "GanKin", "url": "https://github.com/GanKin"},
     }
     if HAS_RELEASE:
         app["downloadUrl"] = DOWNLOAD
@@ -496,7 +496,7 @@ def head(page: Page, by_slug: dict) -> str:
 {alts}
 <link rel="alternate" hreflang="x-default" href="{default.url if default else page.url}">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Inkstone">
+<meta property="og:site_name" content="Avenra">
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
 <meta property="og:url" content="{page.url}">
@@ -523,7 +523,7 @@ def head(page: Page, by_slug: dict) -> str:
 LANG_REDIRECT = """<script>
 (function () {
   try {
-    if (localStorage.getItem('inkstone-lang')) return;
+    if (localStorage.getItem('avenra-lang')) return;
     var urls = LANG_URLS;
     var wanted = navigator.languages || [navigator.language || ''];
     for (var i = 0; i < wanted.length; i++) {
@@ -533,7 +533,7 @@ LANG_REDIRECT = """<script>
         : tag.split('-')[0];
       if (pick === 'en') return;
       if (urls[pick]) {
-        localStorage.setItem('inkstone-lang', pick);
+        localStorage.setItem('avenra-lang', pick);
         location.replace(urls[pick]);
         return;
       }
@@ -694,7 +694,7 @@ def build(out: Path) -> None:
 
     # Sparkle's update feed. It lives at the repository root because that is
     # where Tools/release.sh writes it, and it is published from here because the
-    # app's SUFeedURL points at https://inkslab.app/appcast.xml — the site is a
+    # app's SUFeedURL points at https://gankin.github.io/Avenra/appcast.xml — the site is a
     # stabler address than a branch on GitHub.
     appcast = ROOT / "appcast.xml"
     if appcast.exists():
@@ -706,7 +706,16 @@ def build(out: Path) -> None:
     # GitHub Pages runs Jekyll by default, which drops files beginning with an
     # underscore and rewrites others unpredictably. This turns it off.
     (out / ".nojekyll").write_text("", encoding="utf-8")
-    (out / "CNAME").write_text(SITE.removeprefix("https://") + "\n", encoding="utf-8")
+    # CNAME is only valid for a custom-domain apex/host. A GitHub Pages project
+    # URL like gankin.github.io/Avenra includes a path and must not be written
+    # into CNAME — Pages would reject it and the site would fail to serve.
+    host = SITE.removeprefix("https://").removeprefix("http://")
+    cname_path = out / "CNAME"
+    if "/" in host.rstrip("/"):
+        if cname_path.exists():
+            cname_path.unlink()
+    else:
+        cname_path.write_text(host.rstrip("/") + "\n", encoding="utf-8")
 
     # A fingerprint of everything published, so the deploy wait can compare one
     # file and still notice a deletion — the case a list of named files misses.

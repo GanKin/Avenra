@@ -1,11 +1,11 @@
 # Migrating the scanner to cmark-gfm — implementation plan
 
 Started 2026-08-17. Follows the assessment in
-`/Users/james/Dev/inkstone/docs/plans/2026-08-17-markdown-parser.md`, which
+`/Users/gankin/Documents/Projects/Avenra/docs/plans/2026-08-17-markdown-parser.md`, which
 concluded the migration is worth doing. This file is the *how*, and is the
 progress record — check items off here rather than re-scanning the repo.
 
-Scope: **macOS desktop first.** The engine lives in `InkstoneCore`, which is
+Scope: **macOS desktop first.** The engine lives in `AvenraCore`, which is
 platform-agnostic, so iOS inherits it for free; but only the macOS editor gets
 looked at and verified this pass.
 
@@ -22,8 +22,8 @@ There are exactly three production callers:
 | Caller | File |
 |---|---|
 | `MarkdownHighlighter` | `App/Views/Editor/MarkdownHighlighter.swift:23` |
-| `LinkRewriter` | `Packages/InkstoneCore/Sources/InkstoneCore/Index/LinkRewriter.swift:22` |
-| `Note` | `Packages/InkstoneCore/Sources/InkstoneCore/Markdown/Note.swift:49` |
+| `LinkRewriter` | `Packages/AvenraCore/Sources/AvenraCore/Index/LinkRewriter.swift:22` |
+| `Note` | `Packages/AvenraCore/Sources/AvenraCore/Markdown/Note.swift:49` |
 
 Keeping the token stream as the contract is what makes this safe: the two
 engines can run side by side over the same corpus and be diffed token for token.
@@ -51,7 +51,7 @@ rewrite than the one being done.
 
 ## What was measured, not assumed (2026-08-17)
 
-Probe: `Packages/InkstoneCore/Tests/InkstoneCoreTests/ProbeTests.swift`
+Probe: `Packages/AvenraCore/Tests/AvenraCoreTests/ProbeTests.swift`
 (temporary — delete when this plan closes).
 
 ### 1. A cmark "column" is a **UTF-8 byte offset**, 1-based
@@ -128,7 +128,7 @@ isolated, so it can no longer misfire inside a code fence or a table cell.
 ## Files
 
 ```
-Packages/InkstoneCore/Sources/InkstoneCore/Markdown/
+Packages/AvenraCore/Sources/AvenraCore/Markdown/
   SyntaxScanner.swift      TokenKind / SyntaxToken / WikiLink — the contract. Unchanged.
                            `scan` routes to whichever engine is selected.
   SourceMap.swift          NEW. (line, UTF-8 column) → UTF-16 NSRange.
@@ -189,19 +189,19 @@ Deliberate changes where the parser disagrees with the old behaviour:
 
 ## Stage 7 — what was actually verified in the app
 
-Not "it builds". A debug-only `INKSTONE_SCANNER=legacy` hook was added to
+Not "it builds". A debug-only `AVENRA_SCANNER=legacy` hook was added to
 `MarkdownHighlighter` so the two engines can be compared through the
 **highlighter**, on the attributes that reach the screen, rather than only on
 the token stream. Using the existing headless dump hooks on a document
 containing every construct:
 
-  - `INKSTONE_INDENT_DUMP` — paragraph indents, head indents, kerning:
+  - `AVENRA_INDENT_DUMP` — paragraph indents, head indents, kerning:
     **byte-identical** between engines, line for line.
-  - `INKSTONE_CONCEAL_DUMP` — which marker lines collapse and to what height:
+  - `AVENRA_CONCEAL_DUMP` — which marker lines collapse and to what height:
     **byte-identical**.
-  - `INKSTONE_CHECKBOX_DUMP` — checkbox state across all three caret positions:
+  - `AVENRA_CHECKBOX_DUMP` — checkbox state across all three caret positions:
     **byte-identical**.
-  - `INKSTONE_CARET_DUMP` — laid out through a real `NSLayoutManager`. The only
+  - `AVENRA_CARET_DUMP` — laid out through a real `NSLayoutManager`. The only
     difference in the whole document is the h1, which the old engine sized at
     18.8pt (body) because its title contained a code span, and the new engine
     sizes at 36pt. Every following line is offset by exactly 55.4pt and nothing
@@ -256,14 +256,14 @@ editor rather than the engine showed it was worse than that:
 
 Two changes, neither of them architectural:
 
-1. **`CachingScanner`** (`Packages/InkstoneCore/Sources/InkstoneCore/Editor/CachingScanner.swift`)
+1. **`CachingScanner`** (`Packages/AvenraCore/Sources/AvenraCore/Editor/CachingScanner.swift`)
    — remembers the last document and its tokens. Anything that re-highlights
    text that did not change now costs nothing to scan.
-2. **`CaretLineTracker`** (`Packages/InkstoneCore/Sources/InkstoneCore/Editor/CaretLineTracker.swift`)
+2. **`CaretLineTracker`** (`Packages/AvenraCore/Sources/AvenraCore/Editor/CaretLineTracker.swift`)
    — live preview's only dependency on the selection is *which line* the caret
    is on, so a selection change that stays on one line skips the pass entirely.
 
-Both live in `InkstoneCore` rather than in the editor coordinator specifically so
+Both live in `AvenraCore` rather than in the editor coordinator specifically so
 they can be tested: the coordinator is `@MainActor`, wrapped around a platform
 text view, and has no test target. 13 tests between them, including the ones that
 matter — that the cache never returns another document's tokens, and that moving
@@ -272,8 +272,8 @@ the caret to a *new* line is never skipped.
 ### Measured in the running app, not inferred
 
 Same workload both times — 10 keystrokes then 10 arrow keys on a 56 KB note,
-driven through System Events, debug build, with `INKSTONE_NO_SCAN_CACHE` and
-`INKSTONE_NO_SELECTION_GUARD` reproducing the old behaviour in the same binary:
+driven through System Events, debug build, with `AVENRA_NO_SCAN_CACHE` and
+`AVENRA_NO_SELECTION_GUARD` reproducing the old behaviour in the same binary:
 
 | | before | after |
 |---|---|---|
@@ -319,9 +319,9 @@ What changed:
     positioned by measured kerning, so the constraint had already gone.
   - `runFont` no longer switches to the code face for runs inside a cell. It had
     to, when a bold word in a cell would otherwise break the column.
-  - A new `.inkstoneTableBlock` attribute tells the renderer to paint table
+  - A new `.avenraTableBlock` attribute tells the renderer to paint table
     chrome — a tinted header band, hairlines between rows, and a border —
-    instead of a code panel. `.inkstoneBlockFill` stays on the block so the copy
+    instead of a code panel. `.avenraBlockFill` stays on the block so the copy
     button and its hit test are untouched.
   - Column widths gain a gutter, since the pipes that used to separate them are
     now invisible and the source's single spaces are not enough.
@@ -489,7 +489,7 @@ failed badly. Synthetic clicks — first `System Events`, then real `CGEvent`s �
 never reached the text view's mouse handling, and a control experiment on a code
 block's button (geometry untouched) failed identically, which is what showed the
 harness was at fault rather than the change. Then a screenshot revealed why: the
-frontmost window was no longer Inkstone. **The clicks had been landing in
+frontmost window was no longer Avenra. **The clicks had been landing in
 whatever the user had in front, on their own machine.** One went into a page of
 their energy account.
 
@@ -536,7 +536,7 @@ than "this wide".
 **Obsidian's extended task states all drew as finished.** `[/]` in progress,
 `[-]` cancelled, `[>]` deferred, `[<]` scheduled, `[?]`, `[!]`, `[*]` — every
 non-blank state rendered as a ticked box with its text struck through, which is
-the one distinction a task list exists to make. The `.inkstoneCheckbox`
+the one distinction a task list exists to make. The `.avenraCheckbox`
 attribute now carries the state *character* rather than a Bool; `contentRange`
 was already exactly that character, so nothing in the token contract changed.
 Done and cancelled read as finished; everything else keeps its text unstruck,
@@ -615,7 +615,7 @@ Smaller, still available:
 
 ## iOS
 
-The engine lives in `InkstoneCore`, so iOS inherited it with no iOS-specific
+The engine lives in `AvenraCore`, so iOS inherited it with no iOS-specific
 work, and the `CaretLineTracker` guard was wired into the UIKit coordinator at
 the same time as the AppKit one. Verified on an iPhone 17 Pro simulator
 (iOS 26.3) rather than assumed: the same construct-heavy documents render

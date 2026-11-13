@@ -4,14 +4,14 @@
 <dict>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>com.orris.inkstone.sync.refresh</string>
-		<string>com.orris.inkstone.sync.processing</string>
-		<string>com.orris.inkstone.sync.continued.*</string>
+		<string>com.gankin.avenra.sync.refresh</string>
+		<string>com.gankin.avenra.sync.processing</string>
+		<string>com.gankin.avenra.sync.continued.*</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Inkstone</string>
+	<string>Avenra</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -43,7 +43,7 @@
 	<key>SUEnableInstallerLauncherService</key>
 	<true/>
 	<key>SUFeedURL</key>
-	<string>https://inkslab.app/appcast.xml</string>
+	<string>https://gankin.github.io/Avenra/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>CHSkSUupddRglHt3C2quzHtit8LMB29BMI44/O9aItg=</string>
 	<key>UIBackgroundModes</key>

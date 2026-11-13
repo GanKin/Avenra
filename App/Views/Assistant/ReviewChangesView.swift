@@ -1,5 +1,5 @@
 import SwiftUI
-import InkstoneCore
+import AvenraCore
 
 /// The review step: what the assistant proposes, before any of it is saved.
 ///

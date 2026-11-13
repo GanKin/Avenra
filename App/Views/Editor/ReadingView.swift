@@ -1,5 +1,5 @@
 import SwiftUI
-import InkstoneCore
+import AvenraCore
 
 #if os(macOS)
 import AppKit
@@ -163,12 +163,12 @@ enum ReadingTypesetter {
                 // The same attributes the editor uses, so one activation path
                 // serves both modes rather than reading mode growing its own.
                 if target.contains("://") {
-                    result.addAttribute(.inkstoneLinkDestination, value: target, range: span.range)
+                    result.addAttribute(.avenraLinkDestination, value: target, range: span.range)
                 } else if let file = resolveVaultPath(target) {
-                    result.addAttribute(.inkstoneVaultFile, value: file, range: span.range)
+                    result.addAttribute(.avenraVaultFile, value: file, range: span.range)
                 } else {
                     result.addAttribute(
-                        .inkstoneWikiLink,
+                        .avenraWikiLink,
                         value: WikiLink(target: target),
                         range: span.range)
                 }
@@ -560,7 +560,7 @@ private struct ReadingTextView: UIViewRepresentable {
 /// a knowledge base cannot be navigated.
 ///
 /// The activation logic is not duplicated here: the typesetter marks links with
-/// the same `.inkstoneVaultFile` / `.inkstoneWikiLink` / `.inkstoneLinkDestination`
+/// the same `.avenraVaultFile` / `.avenraWikiLink` / `.avenraLinkDestination`
 /// attributes the editor uses, so both modes dispatch on the same three keys.
 private final class ReadingNSTextView: NSTextView {
     var actions = EditorActions()
@@ -584,9 +584,9 @@ private final class ReadingNSTextView: NSTextView {
         guard characters.length > 0 else { return }
 
         storage.enumerateAttributes(in: characters) { attributes, range, _ in
-            guard attributes[.inkstoneVaultFile] != nil
-                    || attributes[.inkstoneWikiLink] != nil
-                    || attributes[.inkstoneLinkDestination] != nil
+            guard attributes[.avenraVaultFile] != nil
+                    || attributes[.avenraWikiLink] != nil
+                    || attributes[.avenraLinkDestination] != nil
             else { return }
             let glyphRange = layoutManager.glyphRange(forCharacterRange: range,
                                                       actualCharacterRange: nil)
@@ -606,15 +606,15 @@ private final class ReadingNSTextView: NSTextView {
     private func follow(at index: Int) -> Bool {
         guard let storage = textStorage, index >= 0, index < storage.length else { return false }
         let attributes = storage.attributes(at: index, effectiveRange: nil)
-        if let file = attributes[.inkstoneVaultFile] as? URL {
+        if let file = attributes[.avenraVaultFile] as? URL {
             actions.openVaultFile(file)
             return true
         }
-        if let link = attributes[.inkstoneWikiLink] as? WikiLink {
+        if let link = attributes[.avenraWikiLink] as? WikiLink {
             actions.followWikiLink(link)
             return true
         }
-        if let destination = attributes[.inkstoneLinkDestination] as? String,
+        if let destination = attributes[.avenraLinkDestination] as? String,
            destination.contains("://"), let url = URL(string: destination) {
             actions.openExternal(url)
             return true
@@ -635,11 +635,11 @@ private final class ReadingUITextView: UITextView {
                                                  fractionOfDistanceBetweenInsertionPoints: nil)
         guard index >= 0, index < textStorage.length else { return }
         let attributes = textStorage.attributes(at: index, effectiveRange: nil)
-        if let file = attributes[.inkstoneVaultFile] as? URL {
+        if let file = attributes[.avenraVaultFile] as? URL {
             actions.openVaultFile(file)
-        } else if let link = attributes[.inkstoneWikiLink] as? WikiLink {
+        } else if let link = attributes[.avenraWikiLink] as? WikiLink {
             actions.followWikiLink(link)
-        } else if let destination = attributes[.inkstoneLinkDestination] as? String,
+        } else if let destination = attributes[.avenraLinkDestination] as? String,
                   destination.contains("://"), let url = URL(string: destination) {
             actions.openExternal(url)
         }

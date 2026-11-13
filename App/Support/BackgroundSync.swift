@@ -1,6 +1,6 @@
 #if os(iOS)
 import BackgroundTasks
-import InkstoneCore
+import AvenraCore
 import SwiftUI
 import UIKit
 
@@ -28,7 +28,7 @@ import UIKit
 /// * **Registration must happen before the app finishes launching**, and each
 ///   identifier may be registered exactly once — the header is explicit that a
 ///   second registration of the same identifier kills the app. So this is called
-///   from `InkstoneApp.init`, not from a view.
+///   from `AvenraApp.init`, not from a view.
 /// * **Nothing repeats.** A task request is consumed when it runs. If the
 ///   handler does not schedule the next one, background sync works exactly once
 ///   and then silently never again.
@@ -61,8 +61,8 @@ import UIKit
 enum BackgroundSync {
     /// Identifiers must also appear in `BGTaskSchedulerPermittedIdentifiers` in
     /// Info.plist, or `submit` throws `notPermitted`.
-    static let refreshIdentifier = "com.orris.inkstone.sync.refresh"
-    static let processingIdentifier = "com.orris.inkstone.sync.processing"
+    static let refreshIdentifier = "com.gankin.avenra.sync.refresh"
+    static let processingIdentifier = "com.gankin.avenra.sync.processing"
 
     /// Continued-processing identifiers come in three forms, and they are not
     /// interchangeable. The framework binary names all three —
@@ -81,7 +81,7 @@ enum BackgroundSync {
     /// registering the wildcard returned `false`, the submission was accepted
     /// anyway, and the system then terminated the app with
     /// `No launch handler registered for task with identifier
-    /// com.orris.inkstone.sync.continued.z5pvzdplrm5m` — naming the composed
+    /// com.gankin.avenra.sync.continued.z5pvzdplrm5m` — naming the composed
     /// identifier, which is the answer.
     ///
     /// This is also what the scheduler header means by continued-processing
@@ -89,7 +89,7 @@ enum BackgroundSync {
     /// They have to be: the identifier does not exist until there is a task to
     /// submit. The same header warns that registering one identifier twice kills
     /// the app — so every request gets a fresh suffix and is never reused.
-    static let continuedBase = "com.orris.inkstone.sync.continued"
+    static let continuedBase = "com.gankin.avenra.sync.continued"
 
     /// Suffixes are alphanumeric. A UUID string would bring hyphens into an
     /// identifier whose accepted form is checked by the framework, and this is
@@ -544,7 +544,7 @@ enum BackgroundSync {
 
     /// Reports what the system actually thinks, for the on-device check.
     ///
-    ///   INKSTONE_BG_CHECK=1 ... Inkstone      (see InkstoneApp)
+    ///   AVENRA_BG_CHECK=1 ... Avenra      (see AvenraApp)
     ///
     /// Asks three questions whose answers cannot be inferred from a successful
     /// build: did the handlers register, did a submission survive, and does the
@@ -578,7 +578,7 @@ enum BackgroundSync {
             emit("[bg] continued register ok   \(probe)")
             probeIdentifier = probe
             let probeRequest = BGContinuedProcessingTaskRequest(
-                identifier: probe, title: "Inkstone", subtitle: "Checking background sync…"
+                identifier: probe, title: "Avenra", subtitle: "Checking background sync…"
             )
             // `.fail` rather than `.queue`: a probe that sits in a queue answers
             // nothing. Either the system can run it now or it says why not.

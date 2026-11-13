@@ -11,7 +11,7 @@ decision asked twice.
 
 ## The decision behind both
 
-Inkstone has one load-bearing invariant: **the text storage is the file**. Every
+Avenra has one load-bearing invariant: **the text storage is the file**. Every
 feature is either
 
   1. **styled in place** — the source stays on screen and gains attributes, with

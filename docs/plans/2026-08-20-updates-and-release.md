@@ -1,6 +1,6 @@
 # Auto-update, macOS release, and the iOS App Store attempt
 
-Started 2026-08-20 (Sydney), after the website went live at inkslab.app.
+Started 2026-08-20 (Sydney), after the website went live at gankin.github.io/Avenra.
 
 ## What was asked
 
@@ -19,8 +19,8 @@ Started 2026-08-20 (Sydney), after the website went live at inkslab.app.
     "The resource 'apps' does not allow 'CREATE'.
      Allowed operations are: GET_COLLECTION, GET_INSTANCE, UPDATE"
 
-There is no `com.orris.inkstone` app in the account (six others are). The bundle
-ID itself **is** registered (`com.orris.inkstone`, UNIVERSAL), so that half is
+There is no `com.gankin.avenra` app in the account (six others are). The bundle
+ID itself **is** registered (`com.gankin.avenra`, UNIVERSAL), so that half is
 done — but the record has to be created by a human at
 <https://appstoreconnect.apple.com>. Everything downstream depends on it:
 
@@ -33,7 +33,7 @@ What can be done is to have everything waiting at the door: a signed App Store
 archive, screenshots at the exact required sizes, and the metadata written.
 
 A second thing worth saying plainly: **an iOS app cannot be downloaded from a
-website.** There is no side-load path. "iOS download" on inkslab.app can only
+website.** There is no side-load path. "iOS download" on gankin.github.io/Avenra can only
 ever mean an App Store link, or a TestFlight public link as an interim — and
 TestFlight needs the same app record.
 
@@ -87,7 +87,7 @@ feed advertising a higher version and pointing at the real signed DMG:
 
 - the menu item is present and enabled (so `canCheckForUpdates` was true)
 - `SULastCheckTime` was written after a check against the live feed
-- Sparkle offered the update — "Inkstone 9.9.9 is now available—you have 0.1.1"
+- Sparkle offered the update — "Avenra 9.9.9 is now available—you have 0.1.1"
 - it downloaded, validated the EdDSA signature, installed through the XPC
   service and relaunched the app
 - **and the bundle was still validly signed and Gatekeeper-accepted afterwards**
@@ -100,7 +100,7 @@ Independently, from two directions:
       "The resource 'apps' does not allow 'CREATE'."
 
     xcrun altool --validate-app  →
-      "Cannot determine the Apple ID from Bundle ID 'com.orris.inkstone'"
+      "Cannot determine the Apple ID from Bundle ID 'com.gankin.avenra'"
 
 The bundle ID is registered; the app record is not.
 
@@ -200,7 +200,7 @@ server infrastructure, and a separate decision.
 
 To force a run while attached to Xcode, pause in the debugger and:
 
-    e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateLaunchForTaskWithIdentifier:@"com.orris.inkstone.sync.refresh"]
+    e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateLaunchForTaskWithIdentifier:@"com.gankin.avenra.sync.refresh"]
 
 ### The root cause: it crashed on every wake-up
 
@@ -238,7 +238,7 @@ The fix is one argument: `using: DispatchQueue.main`.
 
 **Verified after the fix**, on the same phone: registration ok for both periodic
 identifiers, and a continued-processing probe submitted and *launched* —
-`[bg] continued probe launched: com.orris.inkstone.sync.continued.j8fzmgcbtn0g` —
+`[bg] continued probe launched: com.gankin.avenra.sync.continued.j8fzmgcbtn0g` —
 with the handler running to completion and no crash report generated.
 
 ### Finishing a first sync, visibly
@@ -293,12 +293,12 @@ that does not work.
 
 - `Tools/package-dmg.sh` — signed + notarised + stapled DMG, app first then DMG.
   Uses the App Store Connect API key at `~/.private_keys/AuthKey_UYGG95M882.p8`.
-- Certificates: `Developer ID Application: Orris Technology Pty Ltd (K9YT36SP4B)`
+- Certificates: `Developer ID Application: GanKin (K9YT36SP4B)`
   for the DMG, `Apple Development: Zifei Gong` for devices. An **Apple
   Distribution** certificate does not exist yet; Xcode can mint one with
   `-allowProvisioningUpdates` and the same API key.
 - The three sibling apps all ship Sparkle already. Candela vendors the framework
-  because it builds with bare `swiftc`; Inkstone has XcodeGen and SwiftPM, so it
+  because it builds with bare `swiftc`; Avenra has XcodeGen and SwiftPM, so it
   takes the dependency properly instead.
 
 ## Store listing images
@@ -335,7 +335,7 @@ App record `6803462651`, version 0.1.1, build 3 uploaded and attached.
 | Done | |
 | --- | --- |
 | App record | `asc apps create` (2FA, done by James) |
-| Name | **Inkstone Notes** — "Inkstone" is taken by another account, confirmed by a 409 `DUPLICATE.DIFFERENT_ACCOUNT`. asc's `--auto-rename` had silently produced "Inkstone - inkstone". |
+| Name | **Avenra Notes** — "Avenra" is taken by another account, confirmed by a 409 `DUPLICATE.DIFFERENT_ACCOUNT`. asc's `--auto-rename` had silently produced "Avenra - avenra". |
 | Build | 0.1.1 build 3, uploaded and attached |
 | Screenshots | 6 iPhone (`APP_IPHONE_67`) + 6 iPad (`APP_IPAD_PRO_3GEN_129`), all COMPLETE |
 | Listing copy | description, keywords, promotional text, three URLs |
@@ -344,7 +344,7 @@ App record `6803462651`, version 0.1.1, build 3 uploaded and attached.
 | Content rights | no third-party content |
 | Availability | 175 territories, plus new ones automatically |
 | Pricing | free |
-| Copyright | 2026 Orris Technology Pty Ltd |
+| Copyright | 2026 GanKin |
 | Review contact | name, email, phone, notes; `demoAccountRequired` set false |
 
 **Submitted 2026-08-20 11:51 UTC.** Version 0.1.1, build 3 (VALID),
@@ -400,8 +400,8 @@ into `Assets.car` and is not a loose file, so a check against
 
 1. 🔴 **One command, one 2FA code.** Either works:
 
-       asc apps create --name "Inkstone" --bundle-id com.orris.inkstone \
-         --sku inkstone --platform IOS --primary-locale en-US \
+       asc apps create --name "Avenra" --bundle-id com.gankin.avenra \
+         --sku avenra --platform IOS --primary-locale en-US \
          --apple-id iamzifei@gmail.com
 
    then `Tools/release-ios.sh --confirm`. Or the fastlane path:
@@ -413,7 +413,7 @@ into `Assets.car` and is not a loose file, so a check against
    about a month, so later releases need nothing.
 
    Doing it by hand in the web UI works too — Apps → + → New App, iOS, name
-   **Inkstone**, English (U.S.), bundle `com.orris.inkstone`, SKU `inkstone` —
+   **Avenra**, English (U.S.), bundle `com.gankin.avenra`, SKU `avenra` —
    and `fastlane release` picks up from there either way.
 2. 🟡 Decide whether the interim iOS link on the site is **TestFlight public** or
    nothing until App Store approval.

@@ -15,7 +15,7 @@ import Security
 /// starts working on a restored machine is a bill nobody chose. Someone who
 /// wants the same key on two Macs can paste it twice.
 enum AssistantCredentials {
-    private static let service = "com.orris.inkstone.assistant"
+    private static let service = "com.gankin.avenra.assistant"
 
     private static func query(account: String) -> [String: Any] {
         [

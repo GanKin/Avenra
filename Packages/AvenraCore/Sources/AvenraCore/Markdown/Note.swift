@@ -1,0 +1,197 @@
+import Foundation
+
+/// A heading extracted from a note, used for the outline pane and `[[Note#Heading]]` resolution.
+public struct Heading: Hashable, Sendable {
+    public let level: Int
+    public let text: String
+    public let range: NSRange
+
+    public init(level: Int, text: String, range: NSRange) {
+        self.level = level
+        self.text = text
+        self.range = range
+    }
+}
+
+/// Everything the index knows about a note without holding its full text.
+///
+/// Kept small and value-typed: a 20,000-note vault has to fit in memory, so the
+/// body stays on disk and only metadata is retained.
+public struct NoteMetadata: Identifiable, Hashable, Sendable {
+    public let url: URL
+    public var id: URL { url }
+
+    /// Filename without extension. This is the link target other notes use.
+    public let basename: String
+    /// Display title: frontmatter `title`, else first H1, else basename.
+    public let title: String
+    public let frontmatter: Frontmatter
+    /// Inline `#tags` plus frontmatter tags, deduplicated, without leading `#`.
+    public let tags: [String]
+    /// Outgoing links in document order, including embeds.
+    public let outgoingLinks: [WikiLink]
+    /// Bare URLs and `[text](path.md)` links pointing at other notes.
+    public let markdownLinkTargets: [String]
+    /// Paths written as plain prose — `_drafts/pool.md`, or a whole
+    /// `/Users/…/vault/_published/index.md` — which Markdown has no syntax for.
+    ///
+    /// A note that keeps an index refers to files this way constantly, and until
+    /// now none of it counted: the paths were highlighted in the editor and were
+    /// invisible to everything else, so two notes joined by a dozen path
+    /// references appeared unconnected in the graph.
+    ///
+    /// Stored as written. Deciding whether one points inside the vault needs the
+    /// vault root, which the parser does not have.
+    public let pathTargets: [String]
+    public let headings: [Heading]
+    /// `^block-id` anchors defined in this note.
+    public let blockIdentifiers: [String]
+    public let modified: Date
+    public let created: Date
+    public let wordCount: Int
+
+    public var aliases: [String] { frontmatter.aliases }
+
+    /// All names this note answers to when resolving a link.
+    public var linkNames: [String] { [basename] + aliases }
+}
+
+public enum NoteParser {
+    private static let scanner = SyntaxScanner()
+
+    /// Builds metadata from a note's raw text. Pure and `Sendable`, so indexing
+    /// can be parallelised across files with `TaskGroup`.
+    public static func parse(
+        text: String,
+        url: URL,
+        modified: Date = .now,
+        created: Date = .now
+    ) -> NoteMetadata {
+        let (frontmatter, _) = FrontmatterParser.parse(text)
+        let tokens = scanner.scan(text)
+        let nsText = text as NSString
+
+        var links: [WikiLink] = []
+        var markdownTargets: [String] = []
+        var headings: [Heading] = []
+        var blockIdentifiers: [String] = []
+        var inlineTags: [String] = []
+
+        for token in tokens {
+            switch token.kind {
+            case .wikiLink(let link), .embed(let link):
+                links.append(link)
+            case .markdownLink(let destination):
+                // Only internal targets matter for the graph; external URLs are
+                // rendered but never become graph edges.
+                if !destination.contains("://"), !destination.hasPrefix("mailto:") {
+                    markdownTargets.append(destination.removingPercentEncoding ?? destination)
+                }
+            case .heading(let level):
+                headings.append(Heading(
+                    level: level,
+                    text: nsText.substring(with: token.contentRange),
+                    range: token.range
+                ))
+            case .blockIdentifier(let identifier):
+                blockIdentifiers.append(identifier)
+            case .tag(let name):
+                inlineTags.append(name)
+            default:
+                break
+            }
+        }
+
+        // Paths written as prose. Scanned over the whole text rather than over
+        // prose tokens only: the commonest place a path appears is inside
+        // backticks, because that is how one writes a path.
+        let pathTargets = VaultPathDetector.candidates(in: text).map {
+            nsText.substring(with: $0)
+        }
+
+        let basename = url.deletingPathExtension().lastPathComponent
+        let title = frontmatter.properties["title"]?.stringValue
+            ?? headings.first(where: { $0.level == 1 })?.text
+            ?? basename
+
+        // Nested tags imply their ancestors: `#project/avenra` also matches `#project`.
+        let allTags = expandNested(inlineTags + frontmatter.tags)
+
+        return NoteMetadata(
+            url: url,
+            basename: basename,
+            title: title,
+            frontmatter: frontmatter,
+            tags: allTags,
+            outgoingLinks: links,
+            markdownLinkTargets: markdownTargets,
+            pathTargets: pathTargets,
+            headings: headings,
+            blockIdentifiers: blockIdentifiers,
+            modified: modified,
+            created: created,
+            wordCount: wordCount(of: text)
+        )
+    }
+
+    /// Counts CJK characters individually and Latin runs as words, so a mixed
+    /// Chinese/English note reports a number that means something to the user.
+    public static func wordCount(of text: String) -> Int {
+        var count = 0
+        var inLatinRun = false
+        for scalar in text.unicodeScalars {
+            if isCJK(scalar) {
+                count += 1
+                inLatinRun = false
+            } else if isAlphanumeric(scalar) {
+                if !inLatinRun { count += 1 }
+                inLatinRun = true
+            } else {
+                inLatinRun = false
+            }
+        }
+        return count
+    }
+
+    /// Alphanumeric, with a fast path for ASCII.
+    ///
+    /// `CharacterSet.alphanumerics.contains` walks a bitmap for every scalar,
+    /// and over 32 million characters that was 778 ms of the vault's parse —
+    /// the second largest item after syntax scanning. Latin text is almost
+    /// entirely ASCII, where four comparisons settle it; everything else falls
+    /// through to the general answer, which is still correct for Greek,
+    /// Cyrillic, accented Latin and the rest.
+    private static func isAlphanumeric(_ scalar: Unicode.Scalar) -> Bool {
+        let value = scalar.value
+        if value < 128 {
+            return (value >= 48 && value <= 57)      // 0-9
+                || (value >= 65 && value <= 90)      // A-Z
+                || (value >= 97 && value <= 122)     // a-z
+        }
+        return CharacterSet.alphanumerics.contains(scalar)
+    }
+
+    private static func isCJK(_ scalar: Unicode.Scalar) -> Bool {
+        switch scalar.value {
+        case 0x4E00...0x9FFF,   // CJK Unified Ideographs
+             0x3400...0x4DBF,   // Extension A
+             0xF900...0xFAFF,   // Compatibility Ideographs
+             0x3040...0x30FF,   // Kana
+             0xAC00...0xD7AF:   // Hangul syllables
+            return true
+        default:
+            return false
+        }
+    }
+
+    private static func expandNested(_ tags: [String]) -> [String] {
+        var result: Set<String> = []
+        for tag in tags {
+            let parts = tag.split(separator: "/")
+            for index in parts.indices {
+                result.insert(parts[0...index].joined(separator: "/"))
+            }
+        }
+        return result.sorted()
+    }
+}

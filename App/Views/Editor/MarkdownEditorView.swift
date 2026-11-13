@@ -1,5 +1,5 @@
 import SwiftUI
-import InkstoneCore
+import AvenraCore
 
 #if os(macOS)
 import AppKit
@@ -200,7 +200,7 @@ class EditorCoordinator: NSObject {
 
     /// Whether the caret has moved to a different line since the last pass.
     ///
-    /// The decision itself lives in `InkstoneCore.CaretLineTracker`, where it is
+    /// The decision itself lives in `AvenraCore.CaretLineTracker`, where it is
     /// tested; this is only the wiring.
     var caretTracker = CaretLineTracker()
 
@@ -208,7 +208,7 @@ class EditorCoordinator: NSObject {
     func selectionNeedsRehighlight(_ caret: NSRange?) -> Bool {
         #if DEBUG
         // The pre-guard behaviour, for measuring against in the same binary.
-        if ProcessInfo.processInfo.environment["INKSTONE_NO_SELECTION_GUARD"] != nil { return true }
+        if ProcessInfo.processInfo.environment["AVENRA_NO_SELECTION_GUARD"] != nil { return true }
         #endif
         return caretTracker.needsPass(caretLine: caret)
     }
@@ -226,7 +226,7 @@ class EditorCoordinator: NSObject {
         guard let target, handledRevealToken != target.token else { return }
         handledRevealToken = target.token
 
-        let length = (textView.inkstoneText as NSString).length
+        let length = (textView.avenraText as NSString).length
         guard target.range.location < length else { return }
         let range = NSRange(
             location: target.range.location,
@@ -234,7 +234,7 @@ class EditorCoordinator: NSObject {
         )
         // No explicit re-highlight: moving the caret posts a selection change,
         // and `CaretLineTracker` decides from there whether the pass is needed.
-        textView.inkstoneReveal(range)
+        textView.avenraReveal(range)
     }
 
     /// Paragraph range containing the caret, so live preview can reveal syntax
@@ -312,13 +312,13 @@ class EditorCoordinator: NSObject {
         // Attachments are checked before wikilinks: an `![[clip.mp4]]` carries
         // both attributes, and clicking it should play the file rather than try
         // to open a note that does not exist.
-        if let attachment = attributes[.inkstoneAttachment] as? URL {
+        if let attachment = attributes[.avenraAttachment] as? URL {
             actions.openAttachment(attachment)
             return true
         }
         // A footnote marker jumps to its counterpart — reference to definition,
         // and back again — which is the whole point of numbering them.
-        if let id = attributes[.inkstoneFootnote] as? String {
+        if let id = attributes[.avenraFootnote] as? String {
             jumpToFootnote(id: id, from: index, in: storage)
             return true
         }
@@ -326,19 +326,19 @@ class EditorCoordinator: NSObject {
         // wikilink branch because the resolved URL is exact — following the path
         // as a link target would resolve it a second time and could land on a
         // different file with the same name.
-        if let file = attributes[.inkstoneVaultFile] as? URL {
+        if let file = attributes[.avenraVaultFile] as? URL {
             actions.openVaultFile(file)
             return true
         }
-        if let link = attributes[.inkstoneWikiLink] as? WikiLink {
+        if let link = attributes[.avenraWikiLink] as? WikiLink {
             actions.followWikiLink(link)
             return true
         }
-        if let tag = attributes[.inkstoneTag] as? String {
+        if let tag = attributes[.avenraTag] as? String {
             actions.followTag(tag)
             return true
         }
-        if let destination = attributes[.inkstoneLinkDestination] as? String {
+        if let destination = attributes[.avenraLinkDestination] as? String {
             if destination.contains("://"), let url = URL(string: destination) {
                 actions.openExternal(url)
             } else {
@@ -353,7 +353,7 @@ class EditorCoordinator: NSObject {
     func jumpToFootnote(id: String, from index: Int, in storage: NSTextStorage) {
         var destination: NSRange?
         storage.enumerateAttribute(
-            .inkstoneFootnote,
+            .avenraFootnote,
             in: NSRange(location: 0, length: storage.length)
         ) { value, range, stop in
             guard value as? String == id, !NSLocationInRange(index, range) else { return }
@@ -517,7 +517,7 @@ enum CaretMetrics {
 }
 
 /// Draws the selection at the height of the text rather than of the line box.
-final class InkstoneLayoutManager: NSLayoutManager {
+final class AvenraLayoutManager: NSLayoutManager {
 
     override func fillBackgroundRectArray(
         _ rectArray: UnsafePointer<NSRect>,
@@ -559,7 +559,7 @@ final class InkstoneLayoutManager: NSLayoutManager {
     }
 }
 
-final class InkstoneTextView: NSTextView {
+final class AvenraTextView: NSTextView {
     weak var coordinator: EditorCoordinator?
 
     /// The copy button under the pointer, and the one just pressed.
@@ -877,7 +877,7 @@ final class InkstoneTextView: NSTextView {
                 )
             }
             storage.enumerateAttribute(
-                .inkstoneBlockFill, in: scope
+                .avenraBlockFill, in: scope
             ) { value, range, _ in
                 guard value != nil,
                       let button = MainActor.assumeIsolated({ renderer.copyButtonRect(for: range) })
@@ -886,7 +886,7 @@ final class InkstoneTextView: NSTextView {
             }
         }
         storage.enumerateAttribute(
-            .inkstoneWikiLink,
+            .avenraWikiLink,
             in: scope
         ) { value, range, _ in
             guard value != nil else { return }
@@ -920,12 +920,12 @@ private struct TextViewRepresentable: NSViewRepresentable {
         scrollView.drawsBackground = false
         scrollView.autohidesScrollers = true
 
-        let textView = InkstoneTextView()
+        let textView = AvenraTextView()
         // Swap in the layout manager that draws the selection at text height.
         // Replacing it on the existing container keeps AppKit's own text stack
         // intact — building the stack by hand would mean re-wiring storage,
         // container sizing and the scroll view's tracking as well.
-        textView.textContainer?.replaceLayoutManager(InkstoneLayoutManager())
+        textView.textContainer?.replaceLayoutManager(AvenraLayoutManager())
         textView.coordinator = context.coordinator
         textView.delegate = context.coordinator
         textView.isRichText = false
@@ -1047,7 +1047,7 @@ private struct TextViewRepresentable: NSViewRepresentable {
 
     @MainActor
     final class MacCoordinator: EditorCoordinator, NSTextViewDelegate {
-        weak var textView: InkstoneTextView?
+        weak var textView: AvenraTextView?
 
         override func scroll(to range: NSRange) {
             textView?.scrollRangeToVisible(range)
@@ -1148,9 +1148,9 @@ private struct TextViewRepresentable: NSViewRepresentable {
         /// is exactly where a stray allocation shows up as the thing it was
         /// meant to be measuring.
         static let isLoggingHighlights =
-            ProcessInfo.processInfo.environment["INKSTONE_LOG_HIGHLIGHTS"] != nil
+            ProcessInfo.processInfo.environment["AVENRA_LOG_HIGHLIGHTS"] != nil
         static let isBenchmarkingScroll =
-            ProcessInfo.processInfo.environment["INKSTONE_SCROLL_BENCH"] != nil
+            ProcessInfo.processInfo.environment["AVENRA_SCROLL_BENCH"] != nil
         /// How far beyond the viewport to style, as a multiple of its height.
         ///
         /// Two. Measured across 66 viewports of a 63k note with 587 table rows,
@@ -1163,7 +1163,7 @@ private struct TextViewRepresentable: NSViewRepresentable {
         ///
         /// Past 2x the passes grow faster than they become rarer.
         static let scopePaddingMultiplier =
-            ProcessInfo.processInfo.environment["INKSTONE_SCOPE_PADDING"]
+            ProcessInfo.processInfo.environment["AVENRA_SCOPE_PADDING"]
                 .flatMap(Double.init) ?? 2.0
 
         /// Character range last styled, so scrolling only re-runs when the reader
@@ -1218,7 +1218,7 @@ private struct TextViewRepresentable: NSViewRepresentable {
         /// scroll takes: move the viewport, ask whether the styled range still
         /// covers it, restyle when it does not.
         ///
-        ///     INKSTONE_SCROLL_BENCH=1 Inkstone.app/Contents/MacOS/Inkstone
+        ///     AVENRA_SCROLL_BENCH=1 Avenra.app/Contents/MacOS/Avenra
         ///
         /// Prints per-pass timings and quits.
         var didRunScrollBenchmark = false
@@ -1412,10 +1412,10 @@ private struct TextViewRepresentable: NSViewRepresentable {
                 // measures is worse than none.
                 if Self.isLoggingHighlights {
                     FileHandle.standardError.write(Data(
-                        "[inkstone] highlight \(storage.length) chars in \(String(format: "%.1f", ms)) ms\n".utf8
+                        "[avenra] highlight \(storage.length) chars in \(String(format: "%.1f", ms)) ms\n".utf8
                     ))
                     let url = (FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
-                        ?? URL(fileURLWithPath: NSTemporaryDirectory())).appending(path: "inkstone-debug.log")
+                        ?? URL(fileURLWithPath: NSTemporaryDirectory())).appending(path: "avenra-debug.log")
                     let line = "[perf] highlight \(storage.length) chars "
                         + "\(String(format: "%.1f", ms)) ms scans=\(ScanCache.shared.scanCount)\n"
                     if let handle = try? FileHandle(forWritingTo: url) {
@@ -1672,7 +1672,7 @@ private extension UITextView {
 /// equivalent of. The text is drawn by the layout manager afterwards, so
 /// everything painted here lands behind it, which is what the fills and rules
 /// need.
-final class InkstonePhoneTextView: UITextView {
+final class AvenraPhoneTextView: UITextView {
     /// Called on every layout pass. A closure rather than a coordinator
     /// reference because the coordinator type is nested in the representable and
     /// not nameable from here.
@@ -1751,7 +1751,7 @@ private struct TextViewRepresentable: UIViewRepresentable {
         // TextKit 1 deliberately: we need `layoutManager.characterIndex(for:)`
         // to hit-test link taps, which has no direct TextKit 2 equivalent that
         // works as cleanly inside a `UITextView`.
-        let textView = InkstonePhoneTextView(usingTextLayoutManager: false)
+        let textView = AvenraPhoneTextView(usingTextLayoutManager: false)
         textView.coordinator = context.coordinator
         textView.delegate = context.coordinator
         textView.onLayout = { [weak coordinator = context.coordinator] in
@@ -1805,7 +1805,7 @@ private struct TextViewRepresentable: UIViewRepresentable {
         // Brings the keyboard up so the accessory row can be seen in a
         // screenshot; the simulator otherwise uses the Mac's keyboard and never
         // shows one.
-        if ProcessInfo.processInfo.environment["INKSTONE_FOCUS_EDITOR"] != nil {
+        if ProcessInfo.processInfo.environment["AVENRA_FOCUS_EDITOR"] != nil {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 textView.becomeFirstResponder()
             }
@@ -2001,7 +2001,7 @@ private struct TextViewRepresentable: UIViewRepresentable {
             }
             if let range = renderer.copyButtonHit(at: viewPoint),
                copyBlock(range: range, in: storage) {
-                (textView as? InkstonePhoneTextView)?.flashCopied(range)
+                (textView as? AvenraPhoneTextView)?.flashCopied(range)
                 return
             }
 

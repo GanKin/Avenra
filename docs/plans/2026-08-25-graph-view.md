@@ -103,7 +103,7 @@ works.
 
 Obsidian's own graph, on this vault, from its saved `.obsidian/graph.json`:
 `showTags: false`, `showOrphans: true`, `centerStrength: 0.519`, `repelStrength:
-10`, `linkStrength: 1`, `linkDistance: 250`. Inkstone's defaults now read the
+10`, `linkStrength: 1`, `linkDistance: 250`. Avenra's defaults now read the
 same, and `showTags` was flipped to off to match.
 
 Two things came out of looking at the two side by side:

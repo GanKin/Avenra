@@ -86,7 +86,7 @@ struct BackgroundSyncSection: View {
     private var refreshStatusText: String {
         switch refreshStatus {
         case .available: return "On"
-        case .denied: return "Off for Inkstone"
+        case .denied: return "Off for Avenra"
         case .restricted: return "Restricted"
         @unknown default: return "Unknown"
         }
@@ -109,13 +109,13 @@ struct BackgroundSyncSection: View {
             // in the picker above is a floor the system is free to ignore.
             return """
             iOS decides when a background sync runs. It learns from when you open \
-            Inkstone, and it will not wake the app at all if you have force-quit it \
+            Avenra, and it will not wake the app at all if you have force-quit it \
             from the app switcher. Expect a few runs a day, not one every interval.
             """
         case .denied:
-            return "Turn it on in Settings › General › Background App Refresh, and again in Settings › Inkstone. Until then Inkstone can only sync while it is on screen."
+            return "Turn it on in Settings › General › Background App Refresh, and again in Settings › Avenra. Until then Avenra can only sync while it is on screen."
         case .restricted:
-            return "Background App Refresh is restricted on this device, by Screen Time or a device management profile. Inkstone can only sync while it is on screen."
+            return "Background App Refresh is restricted on this device, by Screen Time or a device management profile. Avenra can only sync while it is on screen."
         @unknown default:
             return ""
         }

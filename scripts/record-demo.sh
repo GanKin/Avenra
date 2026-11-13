@@ -14,13 +14,13 @@ set -uo pipefail
 #   * The vault hook is inside `#if DEBUG`, so this records a **Debug** build.
 #     That is a real difference and the caption on the site must not claim a
 #     speed this footage cannot support.
-#   * Input goes through scripts/send-keys.py, which posts to Inkstone's pid.
+#   * Input goes through scripts/send-keys.py, which posts to Avenra's pid.
 #     cliclick and System Events both deliver to whatever is frontmost, which is
 #     useless here: the rig runs while another window covers the app, and on a
 #     locked screen nothing can be brought to the front at all.
 #   * Capture goes by window ID. `screencapture -R x,y,w,h` photographs whatever
 #     is at those coordinates and still exits 0, so a window that failed to open
-#     yields a perfectly valid film of somebody's desktop. inkstone-window.py
+#     yields a perfectly valid film of somebody's desktop. avenra-window.py
 #     refuses to return an ID for a window that is not really on screen.
 #   * The display sleeps, and a sleeping display records black. `caffeinate`
 #     runs for the whole session — the first attempt at this produced a 156 KB
@@ -34,16 +34,16 @@ set -uo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUT="${1:-$ROOT/assets/footage}"
-APP="${INKSTONE_APP:-$ROOT/.build-demo/Build/Products/Debug/Inkstone.app}"
-BIN="$APP/Contents/MacOS/Inkstone"
-VAULT="${INKSTONE_VAULT:-$ROOT/assets/demo-vault}"
+APP="${AVENRA_APP:-$ROOT/.build-demo/Build/Products/Debug/Avenra.app}"
+BIN="$APP/Contents/MacOS/Avenra"
+VAULT="${AVENRA_VAULT:-$ROOT/assets/demo-vault}"
 KEYS="python3 $ROOT/scripts/send-keys.py"
-WIN="python3 $ROOT/scripts/inkstone-window.py"
+WIN="python3 $ROOT/scripts/avenra-window.py"
 
 [ -x "$BIN" ] || { echo "error: $BIN not found. Build it with:
-  xcodebuild -project Inkstone.xcodeproj -scheme Inkstone -destination 'platform=macOS' \\
+  xcodebuild -project Avenra.xcodeproj -scheme Avenra -destination 'platform=macOS' \\
     -configuration Debug -derivedDataPath .build-demo \\
-    CODE_SIGN_ENTITLEMENTS=App/Resources/Inkstone-Dev.entitlements build" >&2; exit 1; }
+    CODE_SIGN_ENTITLEMENTS=App/Resources/Avenra-Dev.entitlements build" >&2; exit 1; }
 [ -d "$VAULT" ] || { echo "error: vault not found: $VAULT" >&2; exit 1; }
 mkdir -p "$OUT"
 
@@ -54,9 +54,9 @@ SCRATCH="$VAULT/Untitled.md"
 
 cleanup() {
   pkill -f "screencapture -v" 2>/dev/null
-  osascript -e 'quit app "Inkstone"' >/dev/null 2>&1
-  pkill -f "Inkstone.app/Contents/MacOS/Inkstone" 2>/dev/null
-  rm -f /tmp/inkstone-test-vault "$SCRATCH"
+  osascript -e 'quit app "Avenra"' >/dev/null 2>&1
+  pkill -f "Avenra.app/Contents/MacOS/Avenra" 2>/dev/null
+  rm -f /tmp/avenra-test-vault "$SCRATCH"
 }
 trap cleanup EXIT
 
@@ -65,11 +65,11 @@ trap cleanup EXIT
 cleanup
 sleep 1
 caffeinate -d -u -w $$ &
-echo "$VAULT|Home.md" > /tmp/inkstone-test-vault
-"$BIN" >/tmp/inkstone-run.log 2>&1 &
+echo "$VAULT|Home.md" > /tmp/avenra-test-vault
+"$BIN" >/tmp/avenra-run.log 2>&1 &
 sleep 6
 
-read -r WID WX WY WW WH <<< "$($WIN)" || { echo "error: no Inkstone window — did it launch? see /tmp/inkstone-run.log" >&2; exit 1; }
+read -r WID WX WY WW WH <<< "$($WIN)" || { echo "error: no Avenra window — did it launch? see /tmp/avenra-run.log" >&2; exit 1; }
 echo "==> window $WID  ${WW}x${WH} at ${WX},${WY}"
 
 # ------------------------------------------------------------------- helpers
@@ -97,9 +97,9 @@ stop() {
 # still arrive, which is why the rest of this script works regardless. This
 # decides whether the two segments that need real input can run at all.
 can_focus() {
-  osascript -e 'tell application "Inkstone" to activate' >/dev/null 2>&1
+  osascript -e 'tell application "Avenra" to activate' >/dev/null 2>&1
   sleep 1
-  [ "$(osascript -e 'tell application "System Events" to get name of first process whose frontmost is true' 2>/dev/null)" = "Inkstone" ]
+  [ "$(osascript -e 'tell application "System Events" to get name of first process whose frontmost is true' 2>/dev/null)" = "Avenra" ]
 }
 
 K_RETURN=36; K_G=5; K_O=31; K_N=45; K_E=14

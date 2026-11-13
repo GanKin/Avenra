@@ -7,7 +7,7 @@
 # answer. Four kinds of check, named because they cover different things and a
 # green run should not be read as covering more than it does:
 #
-#   unit        InkstoneCore — the model layer, in isolation
+#   unit        AvenraCore — the model layer, in isolation
 #   e2e         SyncEngine against a fake GitHub, two vaults, one repository
 #   regression  one test per bug actually hit, inside the two suites above
 #   site        the built website, plus the help URL the app links to
@@ -25,11 +25,11 @@ step() {
     echo "── $1 ─────────────────────────────────────────"
 }
 
-step "unit, e2e and regression — InkstoneCore"
-if (cd Packages/InkstoneCore && swift test); then
+step "unit, e2e and regression — AvenraCore"
+if (cd Packages/AvenraCore && swift test); then
     echo "core: pass"
 else
-    FAILED+=("InkstoneCore")
+    FAILED+=("AvenraCore")
 fi
 
 step "site — build, links, and the app's help URL"
@@ -42,7 +42,7 @@ else
 fi
 
 step "build — iOS"
-if xcodebuild -project Inkstone.xcodeproj -scheme Inkstone -configuration Debug \
+if xcodebuild -project Avenra.xcodeproj -scheme Avenra -configuration Debug \
      -destination 'generic/platform=iOS Simulator' build 2>&1 | grep -qE '\*\* BUILD SUCCEEDED'; then
     echo "iOS: pass"
 else
@@ -50,7 +50,7 @@ else
 fi
 
 step "build — macOS"
-if xcodebuild -project Inkstone.xcodeproj -scheme Inkstone -configuration Debug \
+if xcodebuild -project Avenra.xcodeproj -scheme Avenra -configuration Debug \
      -destination 'platform=macOS' build 2>&1 | grep -qE '\*\* BUILD SUCCEEDED'; then
     echo "macOS: pass"
 else
@@ -58,10 +58,10 @@ else
 fi
 
 step "smoke — the built macOS app against a real vault"
-APP="$(xcodebuild -project Inkstone.xcodeproj -scheme Inkstone -configuration Debug \
+APP="$(xcodebuild -project Avenra.xcodeproj -scheme Avenra -configuration Debug \
         -destination 'platform=macOS' -showBuildSettings 2>/dev/null \
-        | awk -F' = ' '/ BUILT_PRODUCTS_DIR/{print $2; exit}')/Inkstone.app/Contents/MacOS/Inkstone"
-if INKSTONE_SMOKE=1 "$APP"; then
+        | awk -F' = ' '/ BUILT_PRODUCTS_DIR/{print $2; exit}')/Avenra.app/Contents/MacOS/Avenra"
+if AVENRA_SMOKE=1 "$APP"; then
     echo "smoke: pass"
 else
     FAILED+=("smoke")

@@ -1,4 +1,4 @@
-/* Inkstone — inkslab.app
+/* Avenra — gankin.github.io/Avenra
  *
  * Four small jobs, none of which the page needs in order to be readable. Every
  * one of them starts from the finished page and adds to it, rather than hiding
@@ -110,7 +110,7 @@
    *    Chinese-language machine straight back to Chinese. */
   Array.prototype.forEach.call(document.querySelectorAll("a.lang"), function (a) {
     a.addEventListener("click", function () {
-      try { localStorage.setItem("inkstone-lang", a.getAttribute("data-lang")); } catch (e) {}
+      try { localStorage.setItem("avenra-lang", a.getAttribute("data-lang")); } catch (e) {}
     });
   });
 })();

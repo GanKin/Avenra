@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>同步你的 vault — Inkstone</title>
-<meta name="description" content="如何讓一個 Inkstone vault 出現在多台裝置上：iCloud 雲碟與 GitHub 各自擅長什麼、怎麼設定，以及衝突到底在什麼情況下才會發生。">
-<link rel="canonical" href="https://inkslab.app/zh-Hant/sync.html">
-<link rel="alternate" hreflang="en" href="https://inkslab.app/sync.html">
-<link rel="alternate" hreflang="zh-Hans" href="https://inkslab.app/zh/sync.html">
-<link rel="alternate" hreflang="zh-Hant" href="https://inkslab.app/zh-Hant/sync.html">
-<link rel="alternate" hreflang="x-default" href="https://inkslab.app/sync.html">
+<title>同步你的 vault — Avenra</title>
+<meta name="description" content="如何讓一個 Avenra vault 出現在多台裝置上：iCloud 雲碟與 GitHub 各自擅長什麼、怎麼設定，以及衝突到底在什麼情況下才會發生。">
+<link rel="canonical" href="https://gankin.github.io/Avenra/zh-Hant/sync.html">
+<link rel="alternate" hreflang="en" href="https://gankin.github.io/Avenra/sync.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://gankin.github.io/Avenra/zh/sync.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://gankin.github.io/Avenra/zh-Hant/sync.html">
+<link rel="alternate" hreflang="x-default" href="https://gankin.github.io/Avenra/sync.html">
 <link rel="icon" href="../assets/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300..700&display=swap">
-<link rel="stylesheet" href="../assets/styles.css?v=f8db207b">
+<link rel="stylesheet" href="../assets/styles.css?v=206b47d3">
 <style>
   .doc { max-width: 42rem; margin-inline: auto; padding-block: clamp(3rem, 7vw, 6rem); }
   .doc h1 { font-size: var(--t-h2); font-weight: 400; letter-spacing: -.02em; line-height: 1.15; }
@@ -64,9 +64,9 @@
 <body>
 <main class="wrap doc" id="main">
   <p class="updated">更新於 2026 年 8 月 23 日</p>
-  <p class="langs"><a href="https://inkslab.app/sync.html">English</a> <a href="https://inkslab.app/zh/sync.html">简体中文</a> <span>繁體中文</span></p>
+  <p class="langs"><a href="https://gankin.github.io/Avenra/sync.html">English</a> <a href="https://gankin.github.io/Avenra/zh/sync.html">简体中文</a> <span>繁體中文</span></p>
   <h1>同步你的 vault</h1>
-  <p>vault 就是一個裝著 Markdown 檔案的資料夾，沒有任何專有格式，所以把它弄到第二台裝置上的合理做法不只一種。Inkstone 提供兩種，各有各的長處。</p>
+  <p>vault 就是一個裝著 Markdown 檔案的資料夾，沒有任何專有格式，所以把它弄到第二台裝置上的合理做法不只一種。Avenra 提供兩種，各有各的長處。</p>
   <table>
     <thead>
       <tr><th>&nbsp;</th><th>iCloud 雲碟</th><th>GitHub</th></tr>
@@ -81,10 +81,10 @@
   </table>
   <p>兩者並不互斥。一個 vault 可以既放在 iCloud 雲碟裡，<em>又</em>推送到 GitHub——iCloud 在你自己的裝置之間搬得快，GitHub 保留歷史和一份不依賴 Apple 的副本。</p>
   <h2 id="icloud">iCloud 雲碟</h2>
-  <p>沒有開關要打開。把 vault 資料夾放進 iCloud 雲碟再打開它，剩下的 iCloud 會做——搬檔案的是系統，不是 Inkstone。</p>
-  <p>唯一存在的設定是<strong>保持檔案已下載</strong>，預設開啟。iCloud 會把你最近沒開過的檔案內容清掉以節省磁碟空間，只留一個佔位符。而佔位符在 Inkstone 看來就是一篇空筆記，所以一個閒置了一陣子的 vault 會看起來像是掉了筆記。只在磁碟真的吃緊的機器上才關掉它。</p>
+  <p>沒有開關要打開。把 vault 資料夾放進 iCloud 雲碟再打開它，剩下的 iCloud 會做——搬檔案的是系統，不是 Avenra。</p>
+  <p>唯一存在的設定是<strong>保持檔案已下載</strong>，預設開啟。iCloud 會把你最近沒開過的檔案內容清掉以節省磁碟空間，只留一個佔位符。而佔位符在 Avenra 看來就是一篇空筆記，所以一個閒置了一陣子的 vault 會看起來像是掉了筆記。只在磁碟真的吃緊的機器上才關掉它。</p>
   <div class="rule-box">
-    <p><strong>iCloud 會產生它自己的衝突副本。</strong>如果同一個檔案在兩台裝置上都被改過、而兩邊都還沒同步完，iCloud 會兩份都留下並標記其中一份。那是 Apple 的機制，不是 Inkstone 的，長得也和下面說的不一樣。</p>
+    <p><strong>iCloud 會產生它自己的衝突副本。</strong>如果同一個檔案在兩台裝置上都被改過、而兩邊都還沒同步完，iCloud 會兩份都留下並標記其中一份。那是 Apple 的機制，不是 Avenra 的，長得也和下面說的不一樣。</p>
   </div>
   <h2 id="github">GitHub</h2>
   <p>你需要一個儲存庫——私有的完全可以，而且很正常——以及一個細粒度個人存取權杖，對該儲存庫擁有 <strong>Contents: read and write</strong> 權限。權杖存在你的鑰匙圈裡，絕不寫進 vault，也絕不寫進設定檔。</p>
@@ -115,7 +115,7 @@
     <p><strong>儲存庫屬於 vault，不屬於 App。</strong>每個 vault 有自己的儲存庫設定。打開另一個 vault 不會繼承上一個的，而沒有被指定儲存庫的 vault 根本不會同步。</p>
   </div>
   <h3>一個儲存庫，一台裝置上只能有一個 vault</h3>
-  <p>同一台裝置上，兩個資料夾不能同時繫結同一個儲存庫。Inkstone 會拒絕，並且在其中一個放棄之前，兩個都不會同步。</p>
+  <p>同一台裝置上，兩個資料夾不能同時繫結同一個儲存庫。Avenra 會拒絕，並且在其中一個放棄之前，兩個都不會同步。</p>
   <p>這不是限制，而是一種<strong>沒有正確行為可言</strong>的配置：每次同步都會把儲存庫改造成最後跑的那個資料夾的樣子，於是兩者輪流覆蓋對方。再聰明的演算法也救不了它——沒有任何辦法判斷兩個工作副本裡哪一個才是儲存庫該有的樣子。</p>
   <p>面板會指出是哪個 vault 已經佔著它，並提供「改繫到這個 vault」，而不是單純拒絕：繫結的壽命會超過當初那個資料夾，一堵沒有門的牆會讓你在任何地方都用不了那個儲存庫。</p>
   <p>兩台<em>裝置</em>共用一個儲存庫正是這個功能的意義所在，完全不受影響。</p>
@@ -152,7 +152,7 @@
   <p>在 macOS 上 App 一直在執行，所以間隔是準的。在 iOS 上由系統決定：它根據你打開 App 的頻率來分配背景時間，而且如果你從 App 切換器裡滑掉了 App，在你再次打開它之前系統不會喚醒它。預期是一天幾次背景執行，而不是每個間隔一次。「背景 App 重新整理」必須開啟，低耗電模式會完全暫停它。</p>
   <p>設定 › Sync 會顯示系統實際做了什麼——上次喚醒 App 是什麼時候，以及每一次嘗試的記錄。</p>
   <h2 id="git">如果這個 vault 是 git 工作副本</h2>
-  <p>如果資料夾裡有 <code>.git</code> 目錄，Inkstone 的 GitHub 同步會自動關閉，並說明原因。</p>
+  <p>如果資料夾裡有 <code>.git</code> 目錄，Avenra 的 GitHub 同步會自動關閉，並說明原因。</p>
   <figure class="window">
     <picture>
       <source srcset="../assets/guide/sync-git-guard.webp" type="image/webp">
@@ -161,9 +161,9 @@
     </picture>
     <figcaption>對一個 git 已經在同步的 vault 顯示的提示</figcaption>
   </figure>
-  <p>這不是限制，而是兩套機制在打架。git 會合併：三方合併、有歷史、衝突標記由人來解決。Inkstone 的同步是逐檔案、後寫覆蓋先寫。讓兩者在同一個資料夾上跑，各自會撤銷對方的結果。</p>
+  <p>這不是限制，而是兩套機制在打架。git 會合併：三方合併、有歷史、衝突標記由人來解決。Avenra 的同步是逐檔案、後寫覆蓋先寫。讓兩者在同一個資料夾上跑，各自會撤銷對方的結果。</p>
   <p>行得通的安排是每套機制只有一個寫入方：</p>
-  <figure aria-label="桌面端走 git、手機端走 Inkstone，共同指向一個儲存庫">
+  <figure aria-label="桌面端走 git、手機端走 Avenra，共同指向一個儲存庫">
     <svg viewBox="0 0 600 150" role="img" width="100%" style="max-width:36rem;height:auto">
       <g fill="none" stroke="currentColor" stroke-width="1" opacity=".3">
         <path d="M252 30 H440"/><path d="M252 120 H440"/>
@@ -173,14 +173,14 @@
         <text x="0" y="34" opacity=".5" letter-spacing=".1em">桌面端</text>
         <text x="0" y="124" opacity=".5" letter-spacing=".1em">手機端</text>
         <text x="266" y="21" opacity=".6">git pull / push</text>
-        <text x="266" y="111" opacity=".6">Inkstone 同步</text>
+        <text x="266" y="111" opacity=".6">Avenra 同步</text>
         <text x="472" y="79" font-size="13">儲存庫</text>
       </g>
     </svg>
   </figure>
-  <p>桌面端用 git，手機端用 Inkstone。手機的變更透過 <code>git pull</code> 到達桌面；桌面的變更推送之後到達手機。提交之前先 pull——手機也在往同一個分支寫。</p>
+  <p>桌面端用 git，手機端用 Avenra。手機的變更透過 <code>git pull</code> 到達桌面；桌面的變更推送之後到達手機。提交之前先 pull——手機也在往同一個分支寫。</p>
   <p>如果你確實想同步一個 git 工作副本，有一個針對單一 vault 的覆寫開關。不主動打開它就一直是關的。</p>
-  <h2 id="refuses">Inkstone 拒絕做的事</h2>
+  <h2 id="refuses">Avenra 拒絕做的事</h2>
   <p>有幾種情況看起來像是一條指令，但幾乎總是意外，所以同步會停下來而不是照做。</p>
   <ul>
     <li><strong>儲存庫變空了</strong>，但之前在那裡記錄過檔案。空清單遠遠更可能是分支填錯了或權杖掉了權限，而不是有人真的清空了它——而對「遠端檔案被刪」的正確反應是刪掉本機那份。</li>
@@ -191,7 +191,7 @@
   <h2 id="files">哪些檔案會被同步</h2>
   <p>筆記和白板永遠同步。附件按類型同步——圖片、音訊、PDF、影片、其他檔案——每一類有自己的開關，另有一個容量上限。都在設定 › Sync 裡。</p>
   <p>vault 根目錄下的 <code>.gitignore</code> 會被遵守，並且會跟著 vault 一起同步，所以第二台裝置拿到的是同一套規則，而不是把第一台刻意排除掉的東西全都傳上去。</p>
-  <a class="home" href="https://inkslab.app/zh-Hant/">← Inkstone</a>
+  <a class="home" href="https://gankin.github.io/Avenra/zh-Hant/">← Avenra</a>
 </main>
 </body>
 </html>

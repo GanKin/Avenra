@@ -232,11 +232,11 @@ class LandingPages(BuiltSite):
         # The repository has no LICENSE file, so the app is source-available and
         # not open source. The pages are allowed to *discuss* open source — one
         # of them answers "is Obsidian open source?" — but never to assert it of
-        # Inkstone. This catches the specific phrasings that would.
+        # Avenra. This catches the specific phrasings that would.
         forbidden = [
-            "inkstone is open source",
-            "inkstone is an open source",
-            "inkstone is an open-source",
+            "avenra is open source",
+            "avenra is an open source",
+            "avenra is an open-source",
             "open source obsidian alternative for macos",
         ]
         licensed = any((ROOT / n).exists() for n in ("LICENSE", "LICENSE.md", "LICENSE.txt"))
@@ -319,7 +319,7 @@ class ExternalLinks(BuiltSite):
     #: CDN, someone's licence page — is out of our control, and a broken link
     #: there is not a bug this suite can fix.
     #:
-    #: `inkslab.app` is deliberately absent even though it is ours: an absolute
+    #: `gankin.github.io/Avenra` is deliberately absent even though it is ours: an absolute
     #: self-link (canonical, hreflang) points at the *deployed* site, so a page
     #: added in this commit would 404 until the deploy that this very test is
     #: gating. Those are checked against the local build instead, below.
@@ -346,7 +346,7 @@ class ExternalLinks(BuiltSite):
         import urllib.request
 
         request = urllib.request.Request(url, method="HEAD",
-                                         headers={"User-Agent": "inkstone-site-tests"})
+                                         headers={"User-Agent": "avenra-site-tests"})
         try:
             with urllib.request.urlopen(request, timeout=20) as response:
                 return response.status
@@ -360,7 +360,7 @@ class ExternalLinks(BuiltSite):
 
         `releases/latest/download/<name>` resolves only if the latest release
         carries an asset called exactly `<name>` — and the packaging script
-        names its output `Inkstone-<version>.dmg`, so the stable name has to be
+        names its output `Avenra-<version>.dmg`, so the stable name has to be
         uploaded alongside it. `Tools/release-mac.sh` does that now, and checks
         this same URL before it exits. This is the second line: if the two ever
         drift apart again, the site build fails rather than the download.
@@ -371,7 +371,7 @@ class ExternalLinks(BuiltSite):
         self.assertEqual(
             status, 200,
             f"{build.DOWNLOAD} returned {status}. The latest GitHub release "
-            "must carry an asset named exactly Inkstone.dmg — see Tools/release-mac.sh.")
+            "must carry an asset named exactly Avenra.dmg — see Tools/release-mac.sh.")
 
     def test_our_own_links_resolve(self) -> None:
         """Every link into our own GitHub, not only the download button."""

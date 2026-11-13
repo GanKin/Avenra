@@ -3,7 +3,7 @@
 #
 #   scripts/capture-sync-shots.sh [output-dir]
 #
-# Everything shown is invented. The app runs against `INKSTONE_DEMO_DEFAULTS`, a
+# Everything shown is invented. The app runs against `AVENRA_DEMO_DEFAULTS`, a
 # throwaway UserDefaults suite, so the repository, branch, vault list and token
 # state on screen are the ones seeded below and cannot be whoever is running
 # this. That is isolation by construction — safer than blanking fields after the
@@ -20,15 +20,15 @@ OUT="${1:-$ROOT/site/assets/guide}"
 # The sandboxed build cannot open a vault anywhere but the file picker, and a
 # picker is a separate process that cannot be scripted — so the harness build
 # turns the sandbox off, exactly as record-demo.sh does. Never shipped.
-APP="${INKSTONE_APP:-$ROOT/.build-demo/Build/Products/Debug/Inkstone.app}"
-BIN="$APP/Contents/MacOS/Inkstone"
-WIN="python3 $ROOT/scripts/inkstone-window.py"
-SUITE="com.orris.inkstone.shots"
+APP="${AVENRA_APP:-$ROOT/.build-demo/Build/Products/Debug/Avenra.app}"
+BIN="$APP/Contents/MacOS/Avenra"
+WIN="python3 $ROOT/scripts/avenra-window.py"
+SUITE="com.gankin.avenra.shots"
 
 [ -x "$BIN" ] || { echo "error: $BIN not found. Build it with:
-  xcodebuild -project Inkstone.xcodeproj -scheme Inkstone -destination 'platform=macOS' \\
+  xcodebuild -project Avenra.xcodeproj -scheme Avenra -destination 'platform=macOS' \\
     -configuration Debug -derivedDataPath .build-demo \\
-    CODE_SIGN_ENTITLEMENTS=App/Resources/Inkstone-Dev.entitlements build" >&2; exit 1; }
+    CODE_SIGN_ENTITLEMENTS=App/Resources/Avenra-Dev.entitlements build" >&2; exit 1; }
 mkdir -p "$OUT"
 
 # Staged inside the project rather than in $TMPDIR: the app is sandboxed, and a
@@ -36,11 +36,11 @@ mkdir -p "$OUT"
 # fails to open and the capture is of an empty window.
 STAGE="$ROOT/.build-shots"
 mkdir -p "$STAGE"
-quit_app() { pkill -f "Inkstone.app/Contents/MacOS/Inkstone" 2>/dev/null || true; sleep 1; }
+quit_app() { pkill -f "Avenra.app/Contents/MacOS/Avenra" 2>/dev/null || true; sleep 1; }
 cleanup() {
   quit_app
   defaults delete "$SUITE" 2>/dev/null || true
-  rm -rf "$STAGE" /tmp/inkstone-test-vault
+  rm -rf "$STAGE" /tmp/avenra-test-vault
 }
 trap cleanup EXIT
 
@@ -58,11 +58,11 @@ stage_vault() {   # stage_vault <name>
 launch() {        # launch <vault-dir> [settings-pane]
   quit_app
   defaults delete "$SUITE" 2>/dev/null || true
-  echo "$1" > /tmp/inkstone-test-vault
-  INKSTONE_DEMO_DEFAULTS="$SUITE" \
-  INKSTONE_DEMO_SYNC="you/notes@main" \
-  INKSTONE_OPEN_SETTINGS="${2:-}" \
-    "$BIN" >/tmp/inkstone-shots.log 2>&1 &
+  echo "$1" > /tmp/avenra-test-vault
+  AVENRA_DEMO_DEFAULTS="$SUITE" \
+  AVENRA_DEMO_SYNC="you/notes@main" \
+  AVENRA_OPEN_SETTINGS="${2:-}" \
+    "$BIN" >/tmp/avenra-shots.log 2>&1 &
   sleep 7
   # The Settings scene has no window until something opens it. A menu
   # key-equivalent is dispatched before the responder chain, so it arrives even

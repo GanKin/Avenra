@@ -1,5 +1,5 @@
 import SwiftUI
-import InkstoneCore
+import AvenraCore
 
 /// Preferences. Tabbed on macOS, a plain form on iOS.
 struct SettingsView: View {
@@ -48,10 +48,10 @@ struct SettingsView: View {
     /// click, which is exactly the kind of thing that never gets screenshotted or
     /// checked because reaching it by hand is tedious.
     ///
-    ///     INKSTONE_OPEN_SETTINGS=sync .../Inkstone
+    ///     AVENRA_OPEN_SETTINGS=sync .../Avenra
     @State private var tab: Pane = {
         #if DEBUG
-        if let name = ProcessInfo.processInfo.environment["INKSTONE_OPEN_SETTINGS"],
+        if let name = ProcessInfo.processInfo.environment["AVENRA_OPEN_SETTINGS"],
            let pane = Pane(rawValue: name) { return pane }
         #endif
         return .appearance
@@ -62,10 +62,10 @@ struct SettingsView: View {
     /// on each one, which is exactly the kind of check that quietly stops being
     /// done.
     ///
-    ///     SIMCTL_CHILD_INKSTONE_OPEN_SETTINGS=typography xcrun simctl launch <sim> com.orris.inkstone
+    ///     SIMCTL_CHILD_AVENRA_OPEN_SETTINGS=typography xcrun simctl launch <sim> com.gankin.avenra
     @State private var path: [Pane] = {
         #if DEBUG
-        guard let name = ProcessInfo.processInfo.environment["INKSTONE_OPEN_SETTINGS"],
+        guard let name = ProcessInfo.processInfo.environment["AVENRA_OPEN_SETTINGS"],
               let pane = Pane(rawValue: name)
         else { return [] }
         return [pane]
@@ -132,7 +132,7 @@ private struct AppearanceSettings: View {
             // Changing the app language needs a relaunch on Apple platforms
             // unless we swap bundles at runtime; say so rather than silently
             // doing nothing.
-            Text("Takes effect after restarting Inkstone.")
+            Text("Takes effect after restarting Avenra.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
@@ -333,7 +333,7 @@ private struct FilesSettings: View {
 /// switcher, and offering French here would promise a translation the app does
 /// not have.
 enum SyncHelp {
-    private static let site = "https://inkslab.app"
+    private static let site = "https://gankin.github.io/Avenra"
 
     /// The path segment per language, matching `LANGS[…]["dir"]` in
     /// `site/build.py`. English is the default and has no prefix.
@@ -357,7 +357,7 @@ enum SyncHelp {
 
 private struct SyncSettings: View {
     @Environment(Workspace.self) private var workspace
-    /// The app's chosen language, injected by `InkstoneApp`. Not
+    /// The app's chosen language, injected by `AvenraApp`. Not
     /// `Locale.current`, which is the system's — someone who set the app to
     /// 繁體中文 on an English Mac should get the Chinese guide.
     @Environment(\.locale) private var locale
@@ -741,7 +741,7 @@ private struct SyncSettings: View {
                 // Said before the toggle, because it explains why the toggle
                 // is off and cannot be turned on. Git is not a lesser sync to
                 // be worked around — it is the better one for this folder, and
-                // Inkstone's would overwrite the merges it produces.
+                // Avenra's would overwrite the merges it produces.
                 if workspace.vaultIsGitWorkingCopy {
                     VStack(alignment: .leading, spacing: 6) {
                         Label(
@@ -749,7 +749,7 @@ private struct SyncSettings: View {
                             systemImage: "arrow.triangle.branch"
                         )
                         .font(.callout.weight(.medium))
-                        Text("Git already syncs this folder, and it merges — Inkstone's sync overwrites file by file and answers a conflict with a second copy of the file. Running both leaves the two undoing each other. Use git here, and let other devices sync the same repository through Inkstone.")
+                        Text("Git already syncs this folder, and it merges — Avenra's sync overwrites file by file and answers a conflict with a second copy of the file. Running both leaves the two undoing each other. Use git here, and let other devices sync the same repository through Avenra.")
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                         Toggle("Sync it anyway", isOn: gitOverrideBinding)

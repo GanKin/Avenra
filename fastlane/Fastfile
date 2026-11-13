@@ -1,4 +1,4 @@
-# Inkstone — App Store automation.
+# Avenra — App Store automation.
 #
 # The work is split across two lanes for one reason: **only app creation needs a
 # human.**
@@ -10,7 +10,7 @@
 #       "The resource 'apps' does not allow 'CREATE'."
 #
 #     xcrun altool --validate-app  →
-#       "Cannot determine the Apple ID from Bundle ID 'com.orris.inkstone'"
+#       "Cannot determine the Apple ID from Bundle ID 'com.gankin.avenra'"
 #
 # fastlane's `produce` gets around it by driving the same private endpoints the
 # App Store Connect website uses, authenticated with an Apple ID session rather
@@ -27,11 +27,11 @@
 
 default_platform(:ios)
 
-APP_ID       = "com.orris.inkstone"
+APP_ID       = "com.gankin.avenra"
 # Absolute, resolved from this file. fastlane does not guarantee the working
 # directory a lane runs in, and a relative path here reported a perfectly
 # present IPA as missing.
-IPA_PATH     = File.expand_path("../.build-ios-release/export/Inkstone.ipa", __dir__)
+IPA_PATH     = File.expand_path("../.build-ios-release/export/Avenra.ipa", __dir__)
 ASC_KEY_ID   = "UYGG95M882"
 ASC_ISSUER   = "ea36e3b8-3c0a-4a03-819f-24061a386eb4"
 ASC_KEY_PATH = File.expand_path("~/.private_keys/AuthKey_UYGG95M882.p8")
@@ -53,9 +53,9 @@ platform :ios do
     produce(
       username: "iamzifei@gmail.com",
       app_identifier: APP_ID,
-      app_name: "Inkstone",
+      app_name: "Avenra",
       language: "English (U.S.)",
-      sku: "inkstone",
+      sku: "avenra",
       platforms: ["ios"],
       # The bundle ID and its capabilities already exist in the Developer Portal
       # — the Xcode archive created them. Touching the portal again here would

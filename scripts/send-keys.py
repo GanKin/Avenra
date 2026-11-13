@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Post keystrokes straight to Inkstone's process, without activating it.
+"""Post keystrokes straight to Avenra's process, without activating it.
 
 Why this exists rather than `cliclick` or System Events' `keystroke`: both of
 those deliver to whatever is frontmost. That is fine at a desk and useless here
@@ -18,7 +18,7 @@ Usage:
     send-keys.py click <x> <y>                 # global screen points
     send-keys.py scroll <lines>                # negative scrolls down
 
-Exits 1 if Inkstone is not running, rather than posting into the void.
+Exits 1 if Avenra is not running, rather than posting into the void.
 """
 from __future__ import annotations
 
@@ -35,13 +35,13 @@ FLAGS = {
 }
 
 
-def inkstone_pid() -> int:
+def avenra_pid() -> int:
     listing = Quartz.CGWindowListCopyWindowInfo(
         Quartz.kCGWindowListOptionAll, Quartz.kCGNullWindowID) or []
     for window in listing:
-        if window.get("kCGWindowOwnerName") == "Inkstone":
+        if window.get("kCGWindowOwnerName") == "Avenra":
             return int(window["kCGWindowOwnerPID"])
-    raise SystemExit("Inkstone is not running")
+    raise SystemExit("Avenra is not running")
 
 
 def post(pid: int, event) -> None:
@@ -100,7 +100,7 @@ def main(argv: list[str]) -> int:
     if len(argv) < 3:
         print(__doc__)
         return 2
-    pid = inkstone_pid()
+    pid = avenra_pid()
     mode = argv[1]
 
     if mode == "key":

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Builds a signed App Store IPA at .build-ios-release/export/Inkstone.ipa, which
+# Builds a signed App Store IPA at .build-ios-release/export/Avenra.ipa, which
 # is what fastlane's `release` lane uploads.
 #
 #     Tools/package-ios.sh
@@ -40,9 +40,9 @@ AUTH=(-allowProvisioningUpdates
       -authenticationKeyIssuerID "$ISSUER_ID")
 
 echo "==> Archiving for iOS"
-xcodebuild -project Inkstone.xcodeproj -scheme Inkstone -configuration Release \
+xcodebuild -project Avenra.xcodeproj -scheme Avenra -configuration Release \
   -destination 'generic/platform=iOS' \
-  -archivePath "$BUILD/Inkstone.xcarchive" \
+  -archivePath "$BUILD/Avenra.xcarchive" \
   "${AUTH[@]}" archive | grep -E '^\*\* ARCHIVE|error:'
 # A pipeline reports the last command's status, so `xcodebuild | grep` looks
 # successful whenever grep matches — including when what it matched was the
@@ -62,12 +62,12 @@ cat > "$BUILD/ExportOptions.plist" <<EOF
 EOF
 
 echo "==> Exporting for the App Store"
-xcodebuild -exportArchive -archivePath "$BUILD/Inkstone.xcarchive" \
+xcodebuild -exportArchive -archivePath "$BUILD/Avenra.xcarchive" \
   -exportOptionsPlist "$BUILD/ExportOptions.plist" \
   -exportPath "$BUILD/export" "${AUTH[@]}" | grep -E 'EXPORT SUCCEEDED|error:'
 [[ ${PIPESTATUS[0]} -eq 0 ]] || { echo "Export failed." >&2; exit 1; }
 
-IPA="$BUILD/export/Inkstone.ipa"
+IPA="$BUILD/export/Avenra.ipa"
 [[ -f "$IPA" ]] || { echo "No IPA produced." >&2; exit 1; }
 
 # --- Verify what actually got signed ---------------------------------------
@@ -78,7 +78,7 @@ echo "==> Verifying the exported IPA"
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 unzip -q "$IPA" -d "$WORK"
-APP="$WORK/Payload/Inkstone.app"
+APP="$WORK/Payload/Avenra.app"
 
 AUTHORITY="$(codesign -dvv "$APP" 2>&1 | awk -F= '/^Authority/ {print $2; exit}')"
 ENTS="$(codesign -d --entitlements - --xml "$APP" 2>/dev/null | plutil -convert xml1 -o - -)"

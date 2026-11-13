@@ -1,5 +1,5 @@
 import Foundation
-import InkstoneCore
+import AvenraCore
 
 /// Builds a provider from a saved profile.
 ///
@@ -377,7 +377,7 @@ final class Conversation {
 
     private func systemPrompt(for profile: AssistantProfile) -> String {
         var prompt = """
-            You are an assistant inside Inkstone, a Markdown notes app. You are \
+            You are an assistant inside Avenra, a Markdown notes app. You are \
             helping with the user's own notes.
 
             Answer in the language the user writes in. Format replies as \

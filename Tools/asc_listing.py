@@ -9,7 +9,7 @@ by trying the obvious thing first and reading the error:
   * **The app name is not on the app.** It lives on an `appInfoLocalization`,
     and `asc apps info edit` has no `--name`. Worth knowing: creating the app
     with `asc apps create` silently auto-renames when the name is taken, so
-    "Inkstone" became "Inkstone - inkstone" and had to be corrected here.
+    "Avenra" became "Avenra - avenra" and had to be corrected here.
   * **The version string must match the build.** App creation makes a default
     `1.0`; an IPA at 0.1.1 will not attach to it.
   * **`asc metadata pull` returns only `app-info` for a fresh app**, because the

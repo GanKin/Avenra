@@ -89,7 +89,7 @@ final class MermaidRenderer {
     private func trace(_ message: String) {
         #if DEBUG
         let url = (FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
-            ?? URL(fileURLWithPath: NSTemporaryDirectory())).appending(path: "inkstone-debug.log")
+            ?? URL(fileURLWithPath: NSTemporaryDirectory())).appending(path: "avenra-debug.log")
         let line = "[mermaid] \(message)\n"
         if let handle = try? FileHandle(forWritingTo: url) {
             handle.seekToEndOfFile(); handle.write(Data(line.utf8)); try? handle.close()

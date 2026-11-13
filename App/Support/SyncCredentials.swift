@@ -19,7 +19,7 @@ import Security
 /// Synchronizable items cannot be `ThisDeviceOnly`; the accessibility class
 /// moves with it.
 enum SyncCredentials {
-    private static let service = "com.orris.inkstone.github"
+    private static let service = "com.gankin.avenra.github"
     private static let account = "personal-access-token"
 
     /// Matches the synchronizable item, the local one, or either — the Keychain
@@ -48,11 +48,11 @@ enum SyncCredentials {
         // a Simulator, which is how the repository and branch pickers get looked
         // at rather than assumed — they only appear once a token exists.
         //
-        //     SIMCTL_CHILD_INKSTONE_GITHUB_TOKEN=$(gh auth token) xcrun simctl launch …
+        //     SIMCTL_CHILD_AVENRA_GITHUB_TOKEN=$(gh auth token) xcrun simctl launch …
         //
         // Never in a release build: this reads a credential from the process
         // environment, which is the wrong place for one to live.
-        if let injected = ProcessInfo.processInfo.environment["INKSTONE_GITHUB_TOKEN"],
+        if let injected = ProcessInfo.processInfo.environment["AVENRA_GITHUB_TOKEN"],
            !injected.isEmpty {
             return injected
         }

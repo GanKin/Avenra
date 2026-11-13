@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Insert or replace one Sparkle appcast <item> for a release.
 
-    Tools/update-appcast.py --archive .build-release/Inkstone-0.1.0.dmg \\
+    Tools/update-appcast.py --archive .build-release/Avenra-0.1.0.dmg \\
         --version 0.1.0 --build 1 \\
-        --url https://github.com/iamzifei/inkstone/releases/download/v0.1.0/Inkstone-0.1.0.dmg
+        --url https://github.com/GanKin/Avenra/releases/download/v0.1.0/Avenra-0.1.0.dmg
 
 Why not Sparkle's own `generate_appcast`: it derives each enclosure URL as
 `--download-url-prefix` + filename, one prefix for every file in the directory.
@@ -44,9 +44,9 @@ ET.register_namespace("dc", DC_NS)
 EMPTY = """<?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:sparkle="{sparkle}" xmlns:dc="{dc}">
   <channel>
-    <title>Inkstone</title>
-    <link>https://inkslab.app/appcast.xml</link>
-    <description>Most recent Inkstone updates.</description>
+    <title>Avenra</title>
+    <link>https://gankin.github.io/Avenra/appcast.xml</link>
+    <description>Most recent Avenra updates.</description>
     <language>en</language>
   </channel>
 </rss>

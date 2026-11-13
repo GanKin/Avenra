@@ -1703,25 +1703,25 @@
         }
       }
     },
-    "Inkstone": {
+    "Avenra": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Inkstone"
+            "value": "Avenra"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "墨砚"
+            "value": "思野"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "墨硯"
+            "value": "思野"
           }
         }
       }
@@ -3681,25 +3681,25 @@
         }
       }
     },
-    "Takes effect after restarting Inkstone.": {
+    "Takes effect after restarting Avenra.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Takes effect after restarting Inkstone."
+            "value": "Takes effect after restarting Avenra."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "重启墨砚后生效。"
+            "value": "重启思野后生效。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "重新啟動墨硯後生效。"
+            "value": "重新啟動思野後生效。"
           }
         }
       }

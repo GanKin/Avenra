@@ -1,6 +1,6 @@
 import Foundation
 import Observation
-import InkstoneCore
+import AvenraCore
 
 /// The live, editable state of one open note.
 ///

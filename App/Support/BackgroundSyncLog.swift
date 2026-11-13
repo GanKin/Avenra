@@ -25,7 +25,7 @@ enum BackgroundSyncLog {
     private static let limit = 40
 
     private static let key = "backgroundSyncLog"
-    private static let logger = Logger(subsystem: "com.orris.inkstone", category: "BackgroundSync")
+    private static let logger = Logger(subsystem: "com.gankin.avenra", category: "BackgroundSync")
 
     /// What happened. The raw values are stored, so renaming a case rewrites
     /// history — add cases rather than renaming them.

@@ -1,6 +1,6 @@
-Inkstone keeps your notes as what they already are: plain Markdown files, in a folder you choose, on your own device.
+Avenra keeps your notes as what they already are: plain Markdown files, in a folder you choose, on your own device.
 
-There is no database, no import step and no proprietary format. A vault another Markdown app created opens here, and a vault created here opens there. If Inkstone disappeared tomorrow, you would still have a folder of Markdown.
+There is no database, no import step and no proprietary format. A vault another Markdown app created opens here, and a vault created here opens there. If Avenra disappeared tomorrow, you would still have a folder of Markdown.
 
 WRITING
 Headings, bold, quotes, callouts, checkboxes, tables and code all render in place as you type, with the syntax revealed only on the line the cursor is on. Reading mode is a separate, read-only view for when you want the page without the scaffolding. Body font, code font and their sizes are set independently.
@@ -18,7 +18,7 @@ FINDING THINGS
 A fuzzy switcher opens over every note with one gesture. Full-text search understands tag: and path:, and tags work inline or in frontmatter, nested, in any script.
 
 TYPOGRAPHY THAT HANDLES CJK
-Chinese sets solid — no word spaces — so a Latin word dropped into a Han sentence collides with it. Inkstone sets the gap between scripts properly, and lets you choose fonts and sizes that suit both.
+Chinese sets solid — no word spaces — so a Latin word dropped into a Han sentence collides with it. Avenra sets the gap between scripts properly, and lets you choose fonts and sizes that suit both.
 
 TWO DEVICES
 Sync a vault through iCloud, or push it to a GitHub repository with conflicts settled once rather than left as two copies. Per-file-type filters decide whether attachments and media travel with it.

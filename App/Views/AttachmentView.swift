@@ -1,5 +1,5 @@
 import AVKit
-import InkstoneCore
+import AvenraCore
 import PDFKit
 import SwiftUI
 
@@ -61,7 +61,7 @@ struct AttachmentView: View {
                     .font(style.uiFont)
                     .foregroundStyle(style.secondaryText)
             }
-            Text("Inkstone cannot show this kind of file.")
+            Text("Avenra cannot show this kind of file.")
                 .font(style.uiFont)
                 .foregroundStyle(style.secondaryText)
             HStack(spacing: 10) {

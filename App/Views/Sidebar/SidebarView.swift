@@ -1,5 +1,5 @@
 import SwiftUI
-import InkstoneCore
+import AvenraCore
 #if os(macOS)
 import AppKit
 #endif
@@ -16,9 +16,9 @@ struct SidebarView: View {
     /// check that a sheet inherits the workspace and the theme rather than
     /// assuming it does.
     ///
-    ///     SIMCTL_CHILD_INKSTONE_OPEN_SETTINGS=1 xcrun simctl launch <sim> com.orris.inkstone
+    ///     SIMCTL_CHILD_AVENRA_OPEN_SETTINGS=1 xcrun simctl launch <sim> com.gankin.avenra
     @State private var isShowingSettings =
-        ProcessInfo.processInfo.environment["INKSTONE_OPEN_SETTINGS"] != nil
+        ProcessInfo.processInfo.environment["AVENRA_OPEN_SETTINGS"] != nil
     #else
     @State private var isShowingSettings = false
     #endif
@@ -102,7 +102,7 @@ private struct VaultSwitcher: View {
             // a row action, so opening a vault stays one tap and removing one
             // takes a deliberate second.
             if workspace.registry.vaults.count > 1 {
-                Menu("Remove from Inkstone…", systemImage: "minus.circle") {
+                Menu("Remove from Avenra…", systemImage: "minus.circle") {
                     ForEach(workspace.registry.vaults) { vault in
                         Button(role: .destructive) {
                             workspace.forget(vault)

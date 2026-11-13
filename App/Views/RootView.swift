@@ -1,5 +1,5 @@
 import SwiftUI
-import InkstoneCore
+import AvenraCore
 
 /// Top-level layout: sidebar, editor, inspector.
 ///

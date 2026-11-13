@@ -13,9 +13,9 @@ neither. That vault has no Obsidian Sync and is not in iCloud Drive.
 
 `SyncEngine.conflictFilename` produces `<stem> (conflict <stamp>)` and
 `timestamp()` is `"yyyy-MM-dd HHmm"`. The file is
-`<a note> (conflict 2026-08-22 1218).md`. That is Inkstone's own format, to the
-character, and `a user's notes vault/.inkstone/sync.json` confirms the vault is under
-Inkstone sync — 1387 blobs, repository a private notes repository, branch `master`.
+`<a note> (conflict 2026-08-22 1218).md`. That is Avenra's own format, to the
+character, and `a user's notes vault/.avenra/sync.json` confirms the vault is under
+Avenra sync — 1387 blobs, repository a private notes repository, branch `master`.
 
 Read from both devices' actual defaults:
 
@@ -54,8 +54,8 @@ broadcast that global setting to the user's other devices over iCloud. The inten
 is not having to set up the second device. The effect is that a repository
 configured for one vault is applied to a completely different vault elsewhere.
 
-**This already destroyed content in a second repository.** `Samples/Inkstone
-Demo/` was deleted from this repository by six `Delete … from Inkstone`
+**This already destroyed content in a second repository.** `Samples/Avenra
+Demo/` was deleted from this repository by six `Delete … from Avenra`
 commits on 08-18, and `main`'s test suite has been failing since. Same mechanism:
 a vault that did not contain those files, syncing to a repository that did.
 
@@ -110,7 +110,7 @@ Move the repository binding to the vault:
 1. `repository`, `branch`, `isEnabled`, `isAutomatic`, `intervalMinutes` become
    per-vault, keyed by vault id, not global.
 2. Migration: the current global values attach to the vault that has a
-   `.inkstone/sync.json` naming that repository, and to no other.
+   `.avenra/sync.json` naming that repository, and to no other.
 3. `canSync` requires the open vault's own binding. A vault with no binding does
    not sync, rather than borrowing one.
 4. Shared configuration carries the vault identity too, and applies only to a
@@ -175,7 +175,7 @@ kept with the vault it concerns, outside this public repository:
 | | |
 | --- | --- |
 | 🔴 remote held an **older** version than local | 10 files |
-| line-ending only (`core.autocrlf = input` strips a CR that Inkstone's raw PUT kept) | 9 files |
+| line-ending only (`core.autocrlf = input` strips a CR that Avenra's raw PUT kept) | 9 files |
 | genuine content difference, local newer | 1 file (the renamed rules note) |
 | conflict copies and the resurrected old name | 9 files, deleted |
 | new local work never pushed | 84 files |

@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
   <channel>
-    <title>Inkstone</title>
-    <link>https://inkslab.app/appcast.xml</link>
-    <description>Most recent Inkstone updates.</description>
+    <title>Avenra</title>
+    <link>https://gankin.github.io/Avenra/appcast.xml</link>
+    <description>Most recent Avenra updates.</description>
     <language>en</language>
     <item>
       <title>0.1.5</title>
@@ -11,7 +11,7 @@
       <sparkle:version>7</sparkle:version>
       <sparkle:shortVersionString>0.1.5</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-      <enclosure url="https://github.com/iamzifei/inkstone/releases/download/v0.1.5/Inkstone-0.1.5.dmg" sparkle:edSignature="U090zAmntYm9Qc7LcwOCrT6q13UEfi3RQgZuV9b0faMQVp1t+yKBYdnA8WrIGtVB2pxAtHFOcg6cgLTLyXx8AQ==" length="11546082" type="application/octet-stream" />
+      <enclosure url="https://github.com/GanKin/Avenra/releases/download/v0.1.5/Avenra-0.1.5.dmg" sparkle:edSignature="U090zAmntYm9Qc7LcwOCrT6q13UEfi3RQgZuV9b0faMQVp1t+yKBYdnA8WrIGtVB2pxAtHFOcg6cgLTLyXx8AQ==" length="11546082" type="application/octet-stream" />
     </item>
     <item>
       <title>0.1.4</title>
@@ -19,7 +19,7 @@
       <sparkle:version>6</sparkle:version>
       <sparkle:shortVersionString>0.1.4</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-      <enclosure url="https://github.com/iamzifei/inkstone/releases/download/v0.1.4/Inkstone-0.1.4.dmg" sparkle:edSignature="2aGD9+lbf7TkIAcab5Ik6fdg3jBQ89q5xLiErVAXOCkykfq2pUbDgtrrDjEmNHtV0S6Z10cqtCfo7GRf1CkjCw==" length="11539263" type="application/octet-stream" />
+      <enclosure url="https://github.com/GanKin/Avenra/releases/download/v0.1.4/Avenra-0.1.4.dmg" sparkle:edSignature="2aGD9+lbf7TkIAcab5Ik6fdg3jBQ89q5xLiErVAXOCkykfq2pUbDgtrrDjEmNHtV0S6Z10cqtCfo7GRf1CkjCw==" length="11539263" type="application/octet-stream" />
     </item>
     <item>
       <title>0.1.3</title>
@@ -27,7 +27,7 @@
       <sparkle:version>5</sparkle:version>
       <sparkle:shortVersionString>0.1.3</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-      <enclosure url="https://github.com/iamzifei/inkstone/releases/download/v0.1.3/Inkstone-0.1.3.dmg" sparkle:edSignature="eWiEobhstscYgnyQJ1LQy0XKAzqvmTdfOJZMRmJ3iU9ip56BQ9Na5rG+YcjJx4HSqU777n+bMYkXwaSLqPI7Ag==" length="11516014" type="application/octet-stream" />
+      <enclosure url="https://github.com/GanKin/Avenra/releases/download/v0.1.3/Avenra-0.1.3.dmg" sparkle:edSignature="eWiEobhstscYgnyQJ1LQy0XKAzqvmTdfOJZMRmJ3iU9ip56BQ9Na5rG+YcjJx4HSqU777n+bMYkXwaSLqPI7Ag==" length="11516014" type="application/octet-stream" />
     </item>
     <item>
       <title>0.1.2</title>
@@ -35,7 +35,7 @@
       <sparkle:version>4</sparkle:version>
       <sparkle:shortVersionString>0.1.2</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-      <enclosure url="https://github.com/iamzifei/inkstone/releases/download/v0.1.2/Inkstone-0.1.2.dmg" sparkle:edSignature="rkiJVPclKiQuz4uKb/hmgqELNHQXmUa9AilcuKPkXheWn8tx4Nnzenp8SXnfvyI1OJ025mFlf+j4TozYh/vzAQ==" length="11455298" type="application/octet-stream" />
+      <enclosure url="https://github.com/GanKin/Avenra/releases/download/v0.1.2/Avenra-0.1.2.dmg" sparkle:edSignature="rkiJVPclKiQuz4uKb/hmgqELNHQXmUa9AilcuKPkXheWn8tx4Nnzenp8SXnfvyI1OJ025mFlf+j4TozYh/vzAQ==" length="11455298" type="application/octet-stream" />
     </item>
     <item>
       <title>0.1.1</title>
@@ -43,7 +43,7 @@
       <sparkle:version>2</sparkle:version>
       <sparkle:shortVersionString>0.1.1</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-      <enclosure url="https://github.com/iamzifei/inkstone/releases/download/v0.1.1/Inkstone.dmg" sparkle:edSignature="SevvDFmBg5itFq6VlCUKs2V0F+qwES8BdF6yfTiniQtJao5iifPVarRooxEUSx6LAzCeQTdZqhfV8PtoKU9BDw==" length="10854641" type="application/octet-stream" />
+      <enclosure url="https://github.com/GanKin/Avenra/releases/download/v0.1.1/Avenra.dmg" sparkle:edSignature="SevvDFmBg5itFq6VlCUKs2V0F+qwES8BdF6yfTiniQtJao5iifPVarRooxEUSx6LAzCeQTdZqhfV8PtoKU9BDw==" length="10854641" type="application/octet-stream" />
     </item>
   </channel>
 </rss>

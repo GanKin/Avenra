@@ -117,7 +117,7 @@ dictionary when the snapshot is assembled.
 
 ## 6 — Smaller things
 
-- **Three `print()` calls ship in release builds** — `InkstoneApp.swift:618`
+- **Three `print()` calls ship in release builds** — `AvenraApp.swift:618`
   (`[demo] seeded sync binding`), `BackgroundSync.swift:240` and `:323`. Should
   be `Logger`, or `#if DEBUG`.
 - **One `try!`** — `MarkdownEditorView.swift:1187`, a regex literal. It cannot

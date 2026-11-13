@@ -1,10 +1,10 @@
-# Inkstone — website and domain
+# Avenra — website and domain
 
 Started 2026-08-20 (Sydney). Owner: Claude, with two items only James can do.
 
 ## Goal
 
-A marketing site for Inkstone at its own domain, in the same family as the three
+A marketing site for Avenra at its own domain, in the same family as the three
 sibling macOS apps (AudioSwitch, Candela, ClipStack) but designed to a much higher
 typographic standard — the brief was "newspaper, magazine, book", with CJK-Latin
 mixed setting treated as a first-class problem rather than a fallback.
@@ -13,8 +13,8 @@ mixed setting treated as a first-class problem rather than a fallback.
 
 | Decision | Value | Why / evidence |
 | --- | --- | --- |
-| Domain | **inkslab.app** | James chose it 2026-08-20 from a checked shortlist. `inkstone.com/.app/.io/.dev/.so/.md/.ing/.studio/.pro/.xyz` are all taken — `.md`, the ideal one for a Markdown app, was **registered 2026-07-31**, three weeks before we looked (whois). `inkstone` = *ink slab*, so the name is a translation, not a compromise. Vercel quote $9.99 first year; the domain skill's reference table puts renewal at **$14.93** — 1.7×, which is normal for `.app`. Rejected `inkstone.wiki` at $2.99: its renewal is **$26.26, a 12.7× jump**. |
-| Site generator | Adapt `~/Dev/candela/site/build.py` | 694 lines, already production-tested on getcandela.app. It carries hreflang/canonical/og:url computed from one `SITE` constant, srcset from a screenshot manifest, sitemap, robots, `.nojekyll`, `CNAME`, a build fingerprint for the deploy wait, and a reduced-motion path for the hero video. Rewriting all of that would be re-deriving solved problems. **The generator is reused; the design is not** — Inkstone gets its own stylesheet from zero. |
+| Domain | **gankin.github.io/Avenra** | James chose it 2026-08-20 from a checked shortlist. `avenra.com/.app/.io/.dev/.so/.md/.ing/.studio/.pro/.xyz` are all taken — `.md`, the ideal one for a Markdown app, was **registered 2026-07-31**, three weeks before we looked (whois). `avenra` = *ink slab*, so the name is a translation, not a compromise. Vercel quote $9.99 first year; the domain skill's reference table puts renewal at **$14.93** — 1.7×, which is normal for `.app`. Rejected `avenra.wiki` at $2.99: its renewal is **$26.26, a 12.7× jump**. |
+| Site generator | Adapt `~/Dev/candela/site/build.py` | 694 lines, already production-tested on getcandela.app. It carries hreflang/canonical/og:url computed from one `SITE` constant, srcset from a screenshot manifest, sitemap, robots, `.nojekyll`, `CNAME`, a build fingerprint for the deploy wait, and a reduced-motion path for the hero video. Rewriting all of that would be re-deriving solved problems. **The generator is reused; the design is not** — Avenra gets its own stylesheet from zero. |
 | Hosting | GitHub Pages, domain registered at Vercel | Exactly what Candela does. Keeps the three-app family on one deploy story. |
 | Languages | en · zh · zh-Hant · ja · ko · de · fr · es | Same eight as Candela. The app itself ships en/zh/zh-Hant (108 strings); the site goes wider because a site is cheap to translate and an app is not. |
 | Sibling links | AudioSwitch, Candela, ClipStack | James named these three explicitly. Not PoseUp/FigViz/AdWhiz/ImaginePro — those are web products, a different audience. |
@@ -22,12 +22,12 @@ mixed setting treated as a first-class problem rather than a fallback.
 
 ## Phases
 
-- [x] **P0 Domain.** James registered `inkslab.app` himself on 2026-08-20 (Vercel, team orris, $9.99/yr, auto-renew on, expires 2027-08-20). Registrant contact stayed with him — Vercel keeps no reusable WHOIS profile and inventing one is not on.
+- [x] **P0 Domain.** James registered `gankin.github.io/Avenra` himself on 2026-08-20 (Vercel, team gankin, $9.99/yr, auto-renew on, expires 2027-08-20). Registrant contact stayed with him — Vercel keeps no reusable WHOIS profile and inventing one is not on.
 - [x] **P1 Demo footage.** 12-note demo vault at `assets/demo-vault`, five scripted segments, encoded to `site/assets/video/hero.{mp4,webm}` + poster. 39 s, 503 KB / 543 KB.
 - [x] **P2 Screenshots.** Six, all captured 2026-08-20 from the current build, WebP at 640/960/1280 plus intrinsic, sizes in a manifest the build reads.
 - [x] **P3 Site.** `site/build.py`, `site/typeset.py`, `site/assets/styles.css`, `site/assets/site.js`, content as per-language YAML.
 - [x] **P4 Translate.** Eight languages. Structure lives in the template, so a dropped key is a build error rather than a missing section.
-- [x] **P5 Deploy.** Live at <https://inkslab.app>. DNS on Vercel (four A + four AAAA to GitHub Pages, `www` CNAME to `iamzifei.github.io`), mirroring getcandela.app record for record — the IPs were read off the two sibling domains that already work rather than recalled. Pages is `build_type: workflow`, so `docs/` is never published. Certificate approved, `https_enforced: true`, `www` 301s to the apex. All eight pages and every asset return 200; verified in a real browser that Source Serif loads, the video autoplays muted on scroll into view, and all twelve reveal elements resolve.
+- [x] **P5 Deploy.** Live at <https://gankin.github.io/Avenra>. DNS on Vercel (four A + four AAAA to GitHub Pages, `www` CNAME to `gankin.github.io`), mirroring getcandela.app record for record — the IPs were read off the two sibling domains that already work rather than recalled. Pages is `build_type: workflow`, so `docs/` is never published. Certificate approved, `https_enforced: true`, `www` 301s to the apex. All eight pages and every asset return 200; verified in a real browser that Source Serif loads, the video autoplays muted on scroll into view, and all twelve reveal elements resolve.
 
 ## Open: what should `main` be?
 
@@ -35,9 +35,9 @@ The site is published from `feat/website`, not `main`, and that is deliberate.
 
 `main` is **78 commits behind** `feat/ui-theming-icon`, where all the real work
 lives. It has no `docs/`, no `scripts/`, no `Tools/`. Its last twelve commits
-were written by Inkstone's own GitHub sync while the feature was being tested:
+were written by Avenra's own GitHub sync while the feature was being tested:
 they added `Note.md`, `Sync check.md`, `Meeting notes.md` and `中文笔记.md` to
-the root of a **public** repository and deleted `Samples/Inkstone Demo/`.
+the root of a **public** repository and deleted `Samples/Avenra Demo/`.
 
 Merging into that is a decision about what the repository's trunk is, which is
 not a decision to make in passing while wiring up a domain. So `feat/website` is
@@ -71,7 +71,7 @@ Four constraints shaped every script in `scripts/`. All four were found the hard
   `Home.md`: the piped links showed as blank runs, one list item rendered as an
   empty bullet. Non-piped `[[Note]]` is fine. The demo vault has had its pipes
   removed so the screenshots do not show it, which means **the vault is no longer
-  a regression test for it** — worth a real test case in `InkstoneCore`.
+  a regression test for it** — worth a real test case in `AvenraCore`.
 - 🟡 **A canvas opened programmatically never runs fit-to-content**, so it comes
   up as specks in the top-left corner. Opening the same canvas by clicking the
   sidebar frames it correctly. Only reachable by clicking, so the site's canvas
@@ -83,10 +83,10 @@ Four constraints shaped every script in `scripts/`. All four were found the hard
 
 ## HUMAN QUEUE
 
-1. 🔴 **Registrant contact for inkslab.app** — first/last name, email, phone (+61…),
+1. 🔴 **Registrant contact for gankin.github.io/Avenra** — first/last name, email, phone (+61…),
    street address, city, state, postcode, country. Needed to call `buy_domain`;
    the charge is immediate, non-refundable, and auto-renew is on. Alternative:
-   James buys it at <https://vercel.com/domains/search?q=inkslab.app> and P0 is skipped.
+   James buys it at <https://vercel.com/domains/search?q=gankin.github.io/Avenra> and P0 is skipped.
 2. 🟡 **DNS + Pages settings** after purchase — four A records to GitHub Pages
    (185.199.108–111.153) plus AAAA, and set the custom domain on the repo. The
    `CNAME` file is already generated from `SITE`, so nothing in the build changes.

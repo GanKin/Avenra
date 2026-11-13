@@ -1,12 +1,12 @@
-# App Store listing — Inkstone
+# App Store listing — Avenra
 
 Everything App Store Connect asks for, written and ready to paste. Character
 limits are Apple's and each field below is inside its own.
 
 **This cannot be entered until the app record exists.** Creating it is the one
 manual step: appstoreconnect.apple.com → Apps → **+** → New App, platform iOS,
-name `Inkstone`, primary language English (U.S.), bundle ID `com.orris.inkstone`
-(already registered), SKU `inkstone`. The App Store Connect API refuses to create
+name `Avenra`, primary language English (U.S.), bundle ID `com.gankin.avenra`
+(already registered), SKU `avenra`. The App Store Connect API refuses to create
 app records — `POST /v1/apps` returns 403, "The resource 'apps' does not allow
 'CREATE'" — so there is no scripted way around it.
 
@@ -16,22 +16,22 @@ app records — `POST /v1/apps` returns 403, "The resource 'apps' does not allow
 
 | Field | Value |
 | --- | --- |
-| Name (30) | `Inkstone` |
+| Name (30) | `Avenra` |
 | Subtitle (30) | `Markdown notes, as files` |
-| Bundle ID | `com.orris.inkstone` |
-| SKU | `inkstone` |
+| Bundle ID | `com.gankin.avenra` |
+| SKU | `avenra` |
 | Primary category | Productivity |
 | Secondary category | Utilities |
 | Primary language | English (U.S.) |
-| Copyright | `2026 Orris Technology Pty Ltd` |
+| Copyright | `2026 GanKin` |
 
 ## URLs
 
 | Field | Value |
 | --- | --- |
-| Privacy Policy URL | `https://inkslab.app/privacy.html` |
-| Support URL | `https://github.com/iamzifei/inkstone/issues` |
-| Marketing URL | `https://inkslab.app` |
+| Privacy Policy URL | `https://gankin.github.io/Avenra/privacy.html` |
+| Support URL | `https://github.com/GanKin/Avenra/issues` |
+| Marketing URL | `https://gankin.github.io/Avenra` |
 
 ## Promotional text (170)
 
@@ -43,12 +43,12 @@ other editor, on any other device, long after this app is gone.
 ## Description (4000)
 
 ```
-Inkstone keeps your notes as what they already are: plain Markdown files, in a
+Avenra keeps your notes as what they already are: plain Markdown files, in a
 folder you choose, on your own device.
 
 There is no database, no import step and no proprietary format. A vault another
 Markdown app created opens here, and a vault created here opens there. If
-Inkstone disappeared tomorrow, you would still have a folder of Markdown.
+Avenra disappeared tomorrow, you would still have a folder of Markdown.
 
 WRITING
 Headings, bold, quotes, callouts, checkboxes, tables and code all render in
@@ -78,7 +78,7 @@ any script: #项目/进行中 indexes exactly like #project/active.
 
 TYPOGRAPHY THAT HANDLES CJK
 Chinese sets solid — no word spaces — so a Latin word dropped into a Han
-sentence collides with it. Inkstone sets the gap between scripts properly, and
+sentence collides with it. Avenra sets the gap between scripts properly, and
 lets you choose fonts and sizes that suit both.
 
 TWO DEVICES

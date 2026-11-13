@@ -1,5 +1,5 @@
 import Foundation
-import InkstoneCore
+import AvenraCore
 
 /// The models each configured channel offers, fetched once and kept.
 ///

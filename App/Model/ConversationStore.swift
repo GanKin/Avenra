@@ -1,5 +1,5 @@
 import Foundation
-import InkstoneCore
+import AvenraCore
 
 /// A saved conversation.
 struct StoredConversation: Codable, Identifiable, Hashable {
@@ -57,7 +57,7 @@ final class ConversationStore {
     init(directory: URL? = nil) {
         let base = directory ?? FileManager.default
             .urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appending(path: "Inkstone")
+            .appending(path: "Avenra")
         try? FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
         url = base.appending(path: "conversations.json")
         load()

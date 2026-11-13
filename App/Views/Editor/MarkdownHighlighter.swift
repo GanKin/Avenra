@@ -1,5 +1,5 @@
 import Foundation
-import InkstoneCore
+import AvenraCore
 
 #if os(macOS)
 import AppKit
@@ -9,21 +9,21 @@ import UIKit
 
 /// Holds the editor's one cached scan.
 ///
-/// The caching itself is `InkstoneCore.CachingScanner`, where it is tested. This
+/// The caching itself is `AvenraCore.CachingScanner`, where it is tested. This
 /// is the main-actor home for it, plus the debug switches: the highlighter is a
 /// value recreated on every pass, so the cache cannot live inside it.
 @MainActor
 final class ScanCache {
     static let shared = ScanCache()
 
-    /// `INKSTONE_SCANNER=legacy` runs the original regex scanner instead of the
+    /// `AVENRA_SCANNER=legacy` runs the original regex scanner instead of the
     /// parser, so the two can be compared through the *highlighter* — on the
     /// attributes that reach the screen — and not only on the token stream,
     /// which is what `EngineDiffTests` already covers. A token diff cannot tell
     /// you that a paragraph ended up indented differently.
     private var scanner: CachingScanner = {
         #if DEBUG
-        if ProcessInfo.processInfo.environment["INKSTONE_SCANNER"] == "legacy" {
+        if ProcessInfo.processInfo.environment["AVENRA_SCANNER"] == "legacy" {
             return CachingScanner(engine: .legacy)
         }
         #endif
@@ -39,7 +39,7 @@ final class ScanCache {
         #if DEBUG
         // Reproduces the pre-cache behaviour in the same binary, so the two can
         // be measured against each other without reverting anything.
-        if ProcessInfo.processInfo.environment["INKSTONE_NO_SCAN_CACHE"] != nil {
+        if ProcessInfo.processInfo.environment["AVENRA_NO_SCAN_CACHE"] != nil {
             var uncached = CachingScanner()
             bypassScans += 1
             return uncached.tokens(for: text)
@@ -173,7 +173,7 @@ struct MarkdownHighlighter {
         guard scope.length > 0 else { return }
 
         #if DEBUG
-        let phaseLog = ProcessInfo.processInfo.environment["INKSTONE_HIGHLIGHT_PHASES"] != nil
+        let phaseLog = ProcessInfo.processInfo.environment["AVENRA_HIGHLIGHT_PHASES"] != nil
         var mark = DispatchTime.now().uptimeNanoseconds
         var phases: [(String, Double)] = []
         func phase(_ name: String) {
@@ -550,7 +550,7 @@ struct MarkdownHighlighter {
             // long document its sense of chapters. Drawn by the view: paragraph
             // styles have no border of their own.
             if level <= 2 {
-                storage.addAttribute(.inkstoneHeadingRule, value: level, range: token.range)
+                storage.addAttribute(.avenraHeadingRule, value: level, range: token.range)
             }
 
             // Headings set their own metrics; the body line-height multiple is
@@ -628,7 +628,7 @@ struct MarkdownHighlighter {
             // attribute fills the whole line fragment, and with a line-height
             // multiple of 1.75 the tint towers over the words it is meant to hug.
             storage.addAttribute(
-                .inkstoneInlineFill,
+                .avenraInlineFill,
                 value: palette.codeBackground.platformColor,
                 range: isBeingEdited ? token.range : token.contentRange
             )
@@ -717,7 +717,7 @@ struct MarkdownHighlighter {
                 } else if !inlineThumbnail(image, to: storage, in: token.range) {
                     inlineImage(image, to: storage, in: token.range, fullText: fullText)
                 }
-                storage.addAttribute(.inkstoneAttachment, value: resolved, range: token.range)
+                storage.addAttribute(.avenraAttachment, value: resolved, range: token.range)
                 break
             }
 
@@ -737,13 +737,13 @@ struct MarkdownHighlighter {
                    for: embedded, style: style, width: availableWidth
                ) {
                 inlineImage(picture, to: storage, in: token.range, fullText: fullText, centred: false)
-                storage.addAttribute(.inkstoneWikiLink, value: link, range: token.range)
+                storage.addAttribute(.avenraWikiLink, value: link, range: token.range)
                 break
             }
 
             storage.addAttribute(.foregroundColor, value: palette.link.platformColor, range: token.range)
             if let resolved {
-                storage.addAttribute(.inkstoneAttachment, value: resolved, range: token.range)
+                storage.addAttribute(.avenraAttachment, value: resolved, range: token.range)
                 // A video or PDF gets a tinted chip so it reads as a file you can
                 // open, not as a link to another note.
                 if AttachmentKind(url: resolved) != .image {
@@ -751,7 +751,7 @@ struct MarkdownHighlighter {
                     // token would tint the collapsed `![[` and `]]` too, and those
                     // sit on a 0.01pt line, which drags the highlight off-centre.
                     storage.addAttribute(
-                        .inkstoneInlineFill,
+                        .avenraInlineFill,
                         value: palette.codeBackground.platformColor,
                         range: isBeingEdited ? token.range : token.contentRange
                     )
@@ -761,12 +761,12 @@ struct MarkdownHighlighter {
                     .foregroundColor, value: palette.unresolvedLink.platformColor, range: token.range
                 )
             }
-            storage.addAttribute(.inkstoneWikiLink, value: link, range: token.range)
+            storage.addAttribute(.avenraWikiLink, value: link, range: token.range)
             if !isBeingEdited { conceal(delimiters(of: token)) }
 
         case .wikiLink(let link):
             storage.addAttribute(.foregroundColor, value: palette.link.platformColor, range: token.range)
-            storage.addAttribute(.inkstoneWikiLink, value: link, range: token.range)
+            storage.addAttribute(.avenraWikiLink, value: link, range: token.range)
             if !isBeingEdited {
                 conceal(delimiters(of: token))
                 // When an alias is present, hide the target and pipe too so only
@@ -797,18 +797,18 @@ struct MarkdownHighlighter {
                 } else if !inlineThumbnail(image, to: storage, in: token.range) {
                     inlineImage(image, to: storage, in: token.range, fullText: fullText)
                 }
-                storage.addAttribute(.inkstoneAttachment, value: resolved, range: token.range)
+                storage.addAttribute(.avenraAttachment, value: resolved, range: token.range)
                 break
             }
 
             storage.addAttribute(.foregroundColor, value: palette.link.platformColor, range: token.contentRange)
-            storage.addAttribute(.inkstoneLinkDestination, value: destination, range: token.range)
+            storage.addAttribute(.avenraLinkDestination, value: destination, range: token.range)
             if !isBeingEdited { conceal(delimiters(of: token)) }
 
         case .tag(let name):
             storage.addAttributes([
                 .foregroundColor: palette.tag.platformColor,
-                .inkstoneTag: name,
+                .avenraTag: name,
             ], range: token.range)
 
         case .footnoteReference(let id):
@@ -820,7 +820,7 @@ struct MarkdownHighlighter {
                 .font: raised,
                 .foregroundColor: palette.accent.platformColor,
                 .baselineOffset: typography.editorFontSize * 0.32,
-                .inkstoneFootnote: id,
+                .avenraFootnote: id,
             ], range: token.contentRange)
             if !isBeingEdited { conceal(delimiters(of: token)) }
 
@@ -840,7 +840,7 @@ struct MarkdownHighlighter {
             ], range: line)
             storage.addAttributes([
                 .foregroundColor: palette.accent.platformColor,
-                .inkstoneFootnote: id,
+                .avenraFootnote: id,
             ], range: token.contentRange)
             if !isBeingEdited {
                 // Collapse `[^` and `]:` but keep the identifier visible so the
@@ -906,7 +906,7 @@ struct MarkdownHighlighter {
             // Marked on the header even when expanded: a callout you cannot fold
             // is a callout whose `-` does nothing, which is how this arrived —
             // the flag was parsed and read by nobody.
-            storage.addAttribute(.inkstoneCalloutFold, value: folded, range: token.range)
+            storage.addAttribute(.avenraCalloutFold, value: folded, range: token.range)
 
 
 
@@ -991,10 +991,10 @@ struct MarkdownHighlighter {
                 .font: typography.editorFont.platformFont(size: typography.editorFontSize),
                 .foregroundColor: palette.text.platformColor,
                 // Kept so the copy button and its hit test keep working; the
-                // renderer consults `.inkstoneTableBlock` to decide which of the
+                // renderer consults `.avenraTableBlock` to decide which of the
                 // two presentations to paint.
-                .inkstoneBlockFill: true,
-                .inkstoneTableBlock: true,
+                .avenraBlockFill: true,
+                .avenraTableBlock: true,
             ], range: token.range)
             // Typora sets `margin: 0.8em 0` on tables — around the table, not
             // around each row.
@@ -1056,7 +1056,7 @@ struct MarkdownHighlighter {
             let marker = token.contentRange.length == 1
                 ? fullText.substring(with: token.contentRange)
                 : (checked ? "x" : " ")
-            storage.addAttribute(.inkstoneCheckbox, value: marker, range: token.range)
+            storage.addAttribute(.avenraCheckbox, value: marker, range: token.range)
 
             // Only finished states read as finished. An item in progress or
             // deferred is still work, and striking it through said otherwise.
@@ -1093,7 +1093,7 @@ struct MarkdownHighlighter {
                 paragraph.paragraphSpacingBefore = typography.paragraphSpacing * 0.5
                 paragraph.paragraphSpacing = typography.paragraphSpacing * 0.5
                 storage.addAttribute(.paragraphStyle, value: paragraph, range: line)
-                storage.addAttribute(.inkstoneHorizontalRule, value: true, range: line)
+                storage.addAttribute(.avenraHorizontalRule, value: true, range: line)
             }
 
         case .listMarker(let level, let ordered):
@@ -1130,9 +1130,9 @@ struct MarkdownHighlighter {
             } else {
                 // Collapse the marker *and* the space after it, so the text
                 // starts precisely at the paragraph indent. The bullet is then
-                // painted into the reserved gutter; see InkstoneTextView.
+                // painted into the reserved gutter; see AvenraTextView.
                 conceal([token.range])
-                storage.addAttribute(.inkstoneBullet, value: level, range: token.range)
+                storage.addAttribute(.avenraBullet, value: level, range: token.range)
             }
 
         case .blockquote(let depth):
@@ -1157,7 +1157,7 @@ struct MarkdownHighlighter {
             storage.addAttribute(.paragraphStyle, value: paragraph, range: line)
             storage.addAttribute(.foregroundColor, value: palette.secondaryText.platformColor, range: line)
             // The rule down the left edge is drawn by the text view.
-            storage.addAttribute(.inkstoneQuoteDepth, value: depth, range: line)
+            storage.addAttribute(.avenraQuoteDepth, value: depth, range: line)
 
             if isBeingEdited {
                 storage.addAttribute(
@@ -1199,7 +1199,7 @@ struct MarkdownHighlighter {
         storage.addAttributes([
             .font: typography.codeFont.platformFont(size: typography.codeFontSize),
             .foregroundColor: style.palette.text.platformColor,
-            .inkstoneBlockFill: true,
+            .avenraBlockFill: true,
         ], range: token.range)
         applyBlockStyle(
             paragraph, spacing: typography.paragraphSpacing * 0.6,
@@ -1308,7 +1308,7 @@ struct MarkdownHighlighter {
 
         let last = NSRange(location: range.location + range.length - 1, length: 1)
         storage.addAttribute(.kern, value: image.size.width + 4, range: last)
-        storage.addAttribute(.inkstoneInlineMath, value: image, range: range)
+        storage.addAttribute(.avenraInlineMath, value: image, range: range)
     }
 
     /// Turns plain-text file paths into links.
@@ -1352,7 +1352,7 @@ struct MarkdownHighlighter {
             guard let url = resolveVaultPath(path) else { continue }
 
             storage.addAttribute(.foregroundColor, value: palette.link.platformColor, range: absolute)
-            storage.addAttribute(.inkstoneVaultFile, value: url, range: absolute)
+            storage.addAttribute(.avenraVaultFile, value: url, range: absolute)
             storage.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: absolute)
             storage.addAttribute(
                 .underlineColor, value: palette.link.platformColor.withAlphaComponent(0.35), range: absolute
@@ -1407,7 +1407,7 @@ struct MarkdownHighlighter {
             location = max(NSMaxRange(line), location + 1)
         }
 
-        storage.addAttribute(.inkstoneProperties, value: block, range: range)
+        storage.addAttribute(.avenraProperties, value: block, range: range)
     }
 
     /// Makes room for an inline image and tags the run so the text view can draw it.
@@ -1420,7 +1420,7 @@ struct MarkdownHighlighter {
     /// characters the user did not type.
     ///
     /// So instead: collapse the `![[...]]` markup, reserve the image's height by
-    /// raising the line height of that paragraph, and let `InkstoneTextView` paint
+    /// raising the line height of that paragraph, and let `AvenraTextView` paint
     /// the picture into the space that opens up.
     private func inlineImage(
         _ image: PlatformImage,
@@ -1468,8 +1468,8 @@ struct MarkdownHighlighter {
             location = max(line.location + line.length, location + 1)
         }
 
-        storage.addAttribute(.inkstoneInlineImage, value: image, range: range)
-        storage.addAttribute(.inkstoneImageCentred, value: centred, range: range)
+        storage.addAttribute(.avenraInlineImage, value: image, range: range)
+        storage.addAttribute(.avenraImageCentred, value: centred, range: range)
     }
 
     /// Loads an embedded picture at the size its `|300` or `|300x200` hint asks
@@ -1609,7 +1609,7 @@ struct MarkdownHighlighter {
             storage.addAttributes([
                 .font: typography.codeFont.platformFont(size: typography.codeFontSize),
                 .foregroundColor: style.palette.accent.platformColor,
-                .inkstoneInlineFill: style.palette.codeBackground.platformColor,
+                .avenraInlineFill: style.palette.codeBackground.platformColor,
             ], range: span.content)
         case "sub", "sup":
             storage.addAttributes([
@@ -1639,7 +1639,7 @@ struct MarkdownHighlighter {
         storage.addAttribute(.foregroundColor, value: PlatformColor.clear, range: range)
         let last = NSRange(location: NSMaxRange(range) - 1, length: 1)
         storage.addAttribute(.kern, value: width, range: last)
-        storage.addAttribute(.inkstoneInlineText, value: replacement, range: range)
+        storage.addAttribute(.avenraInlineText, value: replacement, range: range)
     }
 
     /// The quoted lines under a callout header — its body.
@@ -1674,7 +1674,7 @@ struct MarkdownHighlighter {
         collapsed.paragraphSpacingBefore = 0
         storage.addAttribute(.paragraphStyle, value: collapsed, range: range)
         // The quote rule is drawn from this, and a folded body has no rule.
-        storage.removeAttribute(.inkstoneQuoteDepth, range: range)
+        storage.removeAttribute(.avenraQuoteDepth, range: range)
     }
 
     /// The head indent an enclosing block has already given this line.
@@ -1738,7 +1738,7 @@ struct MarkdownHighlighter {
         storage.addAttribute(.foregroundColor, value: PlatformColor.clear, range: range)
         let last = NSRange(location: NSMaxRange(range) - 1, length: 1)
         storage.addAttribute(.kern, value: size.width + 4, range: last)
-        storage.addAttribute(.inkstoneInlineThumbnail, value: scaled, range: range)
+        storage.addAttribute(.avenraInlineThumbnail, value: scaled, range: range)
         return true
     }
 
@@ -1861,7 +1861,7 @@ struct MarkdownHighlighter {
             // line inside a code fence was being compressed all along — and when
             // tables changed to wrapping, the test stopped matching anything at
             // all. The attribute is what actually means "this is a block".
-            if storage.attribute(.inkstoneBlockFill, at: line.location, effectiveRange: nil) != nil {
+            if storage.attribute(.avenraBlockFill, at: line.location, effectiveRange: nil) != nil {
                 continue
             }
 
@@ -1922,7 +1922,7 @@ struct MarkdownHighlighter {
             return Double(now - stamp) / 1_000_000
         }
         defer {
-            if ProcessInfo.processInfo.environment["INKSTONE_TABLE_PHASES"] != nil {
+            if ProcessInfo.processInfo.environment["AVENRA_TABLE_PHASES"] != nil {
                 Self.tableTotals.parse += tParse
                 Self.tableTotals.pipes += tPipes
                 Self.tableTotals.measure += tMeasure
@@ -2056,7 +2056,7 @@ struct MarkdownHighlighter {
             storage.addAttribute(.font, value: tiny, range: range)
             storage.addAttribute(.foregroundColor, value: PlatformColor.clear, range: range)
             if isInteriorPipe(at: pipe, in: text) {
-                storage.addAttribute(.inkstoneTableSeparator, value: true, range: range)
+                storage.addAttribute(.avenraTableSeparator, value: true, range: range)
             }
         }
 
@@ -2277,47 +2277,47 @@ struct MarkdownHighlighter {
 
 extension NSAttributedString.Key {
     /// Attached to `[[wikilink]]` runs so a click can resolve the target.
-    static let inkstoneWikiLink = NSAttributedString.Key("inkstoneWikiLink")
+    static let avenraWikiLink = NSAttributedString.Key("avenraWikiLink")
     /// Attached to `[text](destination)` runs.
-    static let inkstoneLinkDestination = NSAttributedString.Key("inkstoneLinkDestination")
+    static let avenraLinkDestination = NSAttributedString.Key("avenraLinkDestination")
     /// Attached to `#tag` runs.
-    static let inkstoneTag = NSAttributedString.Key("inkstoneTag")
+    static let avenraTag = NSAttributedString.Key("avenraTag")
     /// Attached to `![[embed]]` runs that resolve to a file in the vault, so a
     /// click can open or preview it.
-    static let inkstoneAttachment = NSAttributedString.Key("inkstoneAttachment")
+    static let avenraAttachment = NSAttributedString.Key("avenraAttachment")
     /// Carries the decoded image for an embed the text view should paint itself.
-    static let inkstoneInlineImage = NSAttributedString.Key("inkstoneInlineImage")
+    static let avenraInlineImage = NSAttributedString.Key("avenraInlineImage")
 
     /// The properties table standing in for a note's YAML frontmatter.
-    static let inkstoneProperties = NSAttributedString.Key("inkstoneProperties")
+    static let avenraProperties = NSAttributedString.Key("avenraProperties")
 
     /// A file in the vault, named by a plain-text path in the note. The value is
     /// the resolved `URL`, so a click opens exactly the file that was matched.
-    static let inkstoneVaultFile = NSAttributedString.Key("inkstoneVaultFile")
+    static let avenraVaultFile = NSAttributedString.Key("avenraVaultFile")
     /// Marks a callout header so its disclosure can be drawn and clicked.
     /// Value is a Bool: whether the callout is currently folded.
-    static let inkstoneCalloutFold = NSAttributedString.Key("inkstoneCalloutFold")
+    static let avenraCalloutFold = NSAttributedString.Key("avenraCalloutFold")
 
     /// Marks a concealed pipe that separates two cells, so a rule can be drawn
     /// where it was. Value is a Bool.
-    static let inkstoneTableSeparator = NSAttributedString.Key("inkstoneTableSeparator")
+    static let avenraTableSeparator = NSAttributedString.Key("avenraTableSeparator")
 
     /// Marks a concealed list marker so a bullet can be drawn in its place.
-    static let inkstoneBullet = NSAttributedString.Key("inkstoneBullet")
+    static let avenraBullet = NSAttributedString.Key("avenraBullet")
     /// Marks a quoted line so its left rule can be drawn.
-    static let inkstoneQuoteDepth = NSAttributedString.Key("inkstoneQuoteDepth")
+    static let avenraQuoteDepth = NSAttributedString.Key("avenraQuoteDepth")
     /// Marks a concealed task marker so a checkbox can be drawn there.
     ///
     /// Value is the state *character* — `" "`, `"x"`, `"/"`, `"-"`, `">"` — not a
     /// Bool. Obsidian allows any single character and the box has to show which
     /// one it is; a Bool could only say "not blank", which drew everything from
     /// "in progress" to "cancelled" as finished.
-    static let inkstoneCheckbox = NSAttributedString.Key("inkstoneCheckbox")
+    static let avenraCheckbox = NSAttributedString.Key("avenraCheckbox")
     /// A rounded fill hugging the text, drawn by the view. Value is a colour.
-    static let inkstoneInlineFill = NSAttributedString.Key("inkstoneInlineFill")
+    static let avenraInlineFill = NSAttributedString.Key("avenraInlineFill")
 
     /// A thematic break, drawn as a line across the text width.
-    static let inkstoneHorizontalRule = NSAttributedString.Key("inkstoneHorizontalRule")
+    static let avenraHorizontalRule = NSAttributedString.Key("avenraHorizontalRule")
 
     /// A fenced code block or table, drawn as one continuous panel.
     ///
@@ -2325,27 +2325,27 @@ extension NSAttributedString.Key {
     /// line inside a fence gets no fill at all and the gaps between paragraphs
     /// stay unpainted. A block of prose with blank lines between paragraphs came
     /// out as a stack of separate grey stripes rather than one panel.
-    static let inkstoneBlockFill = NSAttributedString.Key("inkstoneBlockFill")
+    static let avenraBlockFill = NSAttributedString.Key("avenraBlockFill")
 
-    /// Marks a block that carries `.inkstoneBlockFill` as a *table*, so the
+    /// Marks a block that carries `.avenraBlockFill` as a *table*, so the
     /// renderer draws a grid rather than a code panel. Both are set: the copy
     /// button and its hit test key off the fill, and only the presentation
     /// differs.
-    static let inkstoneTableBlock = NSAttributedString.Key("inkstoneTableBlock")
+    static let avenraTableBlock = NSAttributedString.Key("avenraTableBlock")
     /// A typeset formula to be drawn within a line of prose. Value is an image.
-    static let inkstoneInlineMath = NSAttributedString.Key("inkstoneInlineMath")
+    static let avenraInlineMath = NSAttributedString.Key("avenraInlineMath")
 
     /// A picture small enough to sit among words, for an embed that shares its
     /// line with other text. Value is an image, already scaled.
-    static let inkstoneInlineThumbnail = NSAttributedString.Key("inkstoneInlineThumbnail")
+    static let avenraInlineThumbnail = NSAttributedString.Key("avenraInlineThumbnail")
 
     /// Text to draw in place of concealed source — the `©` an `&copy;` stands
     /// for. Value is the replacement string.
-    static let inkstoneInlineText = NSAttributedString.Key("inkstoneInlineText")
+    static let avenraInlineText = NSAttributedString.Key("avenraInlineText")
     /// Attached to a footnote marker so clicking it can jump to its definition.
-    static let inkstoneFootnote = NSAttributedString.Key("inkstoneFootnote")
+    static let avenraFootnote = NSAttributedString.Key("avenraFootnote")
     /// Whether a block image is centred. Value is a Bool.
-    static let inkstoneImageCentred = NSAttributedString.Key("inkstoneImageCentred")
+    static let avenraImageCentred = NSAttributedString.Key("avenraImageCentred")
     /// Marks an h1/h2 so a rule can be drawn beneath it. Value is the level.
-    static let inkstoneHeadingRule = NSAttributedString.Key("inkstoneHeadingRule")
+    static let avenraHeadingRule = NSAttributedString.Key("avenraHeadingRule")
 }

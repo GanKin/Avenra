@@ -1,7 +1,7 @@
 # Changelog
 
 Notable changes, newest first. Versions follow the ones Sparkle serves from
-[appcast.xml](https://inkslab.app/appcast.xml).
+[appcast.xml](https://gankin.github.io/Avenra/appcast.xml).
 
 The working notes behind each change — what was reported, what it actually
 turned out to be — are in [`docs/plans/`](docs/plans), one file per piece of
@@ -153,8 +153,8 @@ Every one now does what it says, and each has tests:
   statement and both landing pages were in the sitemap and in no navigation
   anywhere — reachable only by knowing the URL.
 - Two landing pages: [an honest Obsidian
-  comparison](https://inkslab.app/obsidian-alternative.html), and [what syncing a
-  vault actually costs](https://inkslab.app/obsidian-sync-free.html).
+  comparison](https://gankin.github.io/Avenra/obsidian-alternative.html), and [what syncing a
+  vault actually costs](https://gankin.github.io/Avenra/obsidian-sync-free.html).
 - `llms.txt`, so an assistant reading the site gets the summary rather than the
   marketing.
 

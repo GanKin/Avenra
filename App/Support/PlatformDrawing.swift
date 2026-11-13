@@ -91,7 +91,7 @@ typealias PlatformTextView = UITextView
 
 extension PlatformTextView {
     /// The view's text, however the platform spells the property.
-    var inkstoneText: String {
+    var avenraText: String {
         #if os(macOS)
         string
         #else
@@ -100,7 +100,7 @@ extension PlatformTextView {
     }
 
     /// Scrolls `range` into view and puts the caret at its start.
-    func inkstoneReveal(_ range: NSRange) {
+    func avenraReveal(_ range: NSRange) {
         let caret = NSRange(location: range.location, length: 0)
         #if os(macOS)
         setSelectedRange(caret)

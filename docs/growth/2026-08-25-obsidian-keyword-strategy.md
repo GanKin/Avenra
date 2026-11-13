@@ -1,4 +1,4 @@
-# Where Obsidian's search traffic actually is, and which slice Inkstone can take
+# Where Obsidian's search traffic actually is, and which slice Avenra can take
 
 **Measured 2026-08-25** via Ahrefs (waimaoxia shared account, US database).
 Every number below is a reading, not an estimate. Credits used: 11 of the 30/day
@@ -98,7 +98,7 @@ user per month billed annually, $5 billed monthly**. The app itself is free —
 that matters, and any page that implies otherwise is both wrong and less
 persuasive than the truth.
 
-Inkstone syncs through a GitHub repository, at no charge. That is not a
+Avenra syncs through a GitHub repository, at no charge. That is not a
 positioning exercise; it is the literal difference, and it lands on a 3K-volume
 cluster at KD ≤ 5.
 
@@ -118,7 +118,7 @@ because those questions are literally what people typed.
 
 ## 4 — One thing that constrains the copy
 
-**Inkstone has no LICENSE file**, so it is source-available, not open source. The
+**Avenra has no LICENSE file**, so it is source-available, not open source. The
 `obsidian open source alternative` keyword is in the cluster, and the page ranks
 for it by *answering* the question honestly — plain files, no lock-in, source you
 can read — and saying outright that the source is public but not yet under an

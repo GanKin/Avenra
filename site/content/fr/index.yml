@@ -1,4 +1,4 @@
-title: Inkstone — une application de notes Markdown pour macOS et iOS
+title: Avenra — une application de notes Markdown pour macOS et iOS
 description: De simples fichiers Markdown sur votre propre disque. Wikiliens, rétroliens, graphe, canevas et notes du jour, dans une application native pour macOS 26 et iOS 26. Sans base de données, sans Electron, sans compte.
 nav:
   label: Sections
@@ -14,16 +14,16 @@ cta:
 hero:
   eyebrow: macOS 26 · iOS 26 · SwiftUI natif
   title: Vos notes sont des fichiers. Elles devraient le rester.
-  lede: Inkstone travaille directement sur du Markdown ordinaire, dans un dossier que vous choisissez. Elle ouvre le coffre que vous avez déjà, n’écrit rien qu’un autre éditeur ne saurait ouvrir, et range son propre état dans un dossier caché que vous êtes libre de supprimer.
+  lede: Avenra travaille directement sur du Markdown ordinaire, dans un dossier que vous choisissez. Elle ouvre le coffre que vous avez déjà, n’écrit rien qu’un autre éditeur ne saurait ouvrir, et range son propre état dans un dossier caché que vous êtes libre de supprimer.
   note: Gratuit · Apple silicon · English · 简体中文 · 繁體中文
-  video_alt: 'Une capture vidéo d’Inkstone sous macOS : ouverture d’un coffre, saisie d’une ligne mêlant chinois et alphabet latin, suivi d’un wikilien, puis ouverture du graphe.'
+  video_alt: 'Une capture vidéo d’Avenra sous macOS : ouverture d’un coffre, saisie d’une ligne mêlant chinois et alphabet latin, suivi d’un wikilien, puis ouverture du graphe.'
   video_caption: Enregistré sous macOS 26. Sans montage, hormis les fondus entre les sections.
 creed:
   title: Trois décisions dont tout le reste découle
   sub: Elles sont porteuses, et elles expliquent le comportement de l’application.
   columns:
   - title: Les fichiers font foi
-    body: Pas de base de données, pas d’étape d’importation, pas de format propriétaire. Un coffre créé par Obsidian s’ouvre ici ; un coffre créé ici s’ouvre là-bas. Si Inkstone disparaissait demain, il vous resterait un dossier de Markdown.
+    body: Pas de base de données, pas d’étape d’importation, pas de format propriétaire. Un coffre créé par Obsidian s’ouvre ici ; un coffre créé ici s’ouvre là-bas. Si Avenra disparaissait demain, il vous resterait un dossier de Markdown.
   - title: Un lien rompu l’est pour de bon
     body: Faute de base de données pour le réparer, renommer une note réécrit dans le même geste chaque wikilien qui pointait vers elle, à travers tout le coffre. C’est la conséquence directe de la décision précédente, pas une fonction ajoutée après coup.
   - title: Le moteur ignore l’existence des écrans
@@ -36,7 +36,7 @@ features:
       kicker: Écrire
       title: Aperçu vivant, pas un écran scindé
       body: "Titres, gras, citations, encadrés, cases à cocher, tableaux et code se composent à mesure que vous tapez ; la syntaxe ne se montre que sur la ligne où se trouve le curseur. Le mode lecture est une vue distincte, en lecture seule. Police du texte, police du code et leurs corps se règlent séparément. En mode lecture, les caractères de syntaxe sont supprimés et non masqués : un paragraphe copié ne contient que le texte."
-      alt: 'L’éditeur d’Inkstone en aperçu vivant : un titre, un paragraphe mêlant chinois et latin, une liste de tâches, une citation, un encadré, un tableau aligné et un bloc de code.'
+      alt: 'L’éditeur d’Avenra en aperçu vivant : un titre, un paragraphe mêlant chinois et latin, une liste de tâches, une citation, un encadré, un tableau aligné et un bloc de code.'
     links:
       kicker: Relier
       title: Wikiliens, alias, blocs, rétroliens

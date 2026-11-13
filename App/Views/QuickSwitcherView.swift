@@ -1,5 +1,5 @@
 import SwiftUI
-import InkstoneCore
+import AvenraCore
 
 /// Fuzzy note opener (⌘O). The fastest path from "I want that note" to having it
 /// on screen, which is the single most-used command in any notes app.
@@ -137,7 +137,7 @@ struct WelcomeView: View {
                 Image(systemName: "book.closed")
                     .font(.system(size: 44, weight: .light))
                     .foregroundStyle(style.accent)
-                Text("Inkstone")
+                Text("Avenra")
                     .font(.system(size: 30, weight: .medium, design: .serif))
                 Text("Your notes, as plain files you own.")
                     .font(style.uiFont)
@@ -236,7 +236,7 @@ struct WelcomeView: View {
                 return
             }
             guard let vaultURL = try? ICloudContainer.createVaultFolder(in: container),
-                  let vault = try? workspace.registry.register(folder: vaultURL, name: "Inkstone (iCloud)")
+                  let vault = try? workspace.registry.register(folder: vaultURL, name: "Avenra (iCloud)")
             else {
                 iCloudProblem = .unreachable
                 return

@@ -21,11 +21,11 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUT="${1:-$ROOT/site/assets/shots}"
-APP="${INKSTONE_APP:-$ROOT/.build-demo/Build/Products/Debug/Inkstone.app}"
-BIN="$APP/Contents/MacOS/Inkstone"
-VAULT="${INKSTONE_VAULT:-$ROOT/assets/demo-vault}"
+APP="${AVENRA_APP:-$ROOT/.build-demo/Build/Products/Debug/Avenra.app}"
+BIN="$APP/Contents/MacOS/Avenra"
+VAULT="${AVENRA_VAULT:-$ROOT/assets/demo-vault}"
 KEYS="python3 $ROOT/scripts/send-keys.py"
-WIN="python3 $ROOT/scripts/inkstone-window.py"
+WIN="python3 $ROOT/scripts/avenra-window.py"
 # The widths the page actually requests, from the `sizes` attribute build.py
 # writes. Generating a 2400px variant nobody asks for is bytes on a CDN and a
 # line in the manifest that never matches a media query.
@@ -35,15 +35,15 @@ VARIANTS=(640 960 1280)
 command -v cwebp >/dev/null || { echo "error: cwebp not installed (brew install webp)" >&2; exit 1; }
 mkdir -p "$OUT"
 
-quit_app() { pkill -f "Inkstone.app/Contents/MacOS/Inkstone" 2>/dev/null || true; sleep 1; }
-trap 'quit_app; rm -f /tmp/inkstone-test-vault' EXIT
+quit_app() { pkill -f "Avenra.app/Contents/MacOS/Avenra" 2>/dev/null || true; sleep 1; }
+trap 'quit_app; rm -f /tmp/avenra-test-vault' EXIT
 
 caffeinate -d -u -w $$ &
 
 launch() {  # launch <note-file-in-vault>
   quit_app
-  echo "$VAULT|$1" > /tmp/inkstone-test-vault
-  "$BIN" >/tmp/inkstone-run.log 2>&1 &
+  echo "$VAULT|$1" > /tmp/avenra-test-vault
+  "$BIN" >/tmp/avenra-run.log 2>&1 &
   sleep 7
 }
 

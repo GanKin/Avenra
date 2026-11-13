@@ -28,7 +28,7 @@ links to has the same shape. It goes in `static/`, matching `privacy.html`.
 Stated plainly rather than implied, because the request is for *everything* to be
 covered and that is not a claim any honest suite can make about a GUI app.
 
-* **Unit** — `InkstoneCore`, the whole model layer. Real coverage.
+* **Unit** — `AvenraCore`, the whole model layer. Real coverage.
 * **End-to-end** — `SyncEngine` against a stubbed GitHub, both devices simulated
   by two vault directories against one fake remote. This is where the two
   incidents of this week would have been caught.
@@ -66,7 +66,7 @@ New this round:
   the app hard-codes a URL into this site, the Swift side compiles whatever
   string it is given, and neither knows about the other. One test resolves
   `SyncHelp.url` against the page the site actually publishes.
-* `App/Support/SmokeTest.swift` — `INKSTONE_SMOKE=1` drives `Workspace`, which
+* `App/Support/SmokeTest.swift` — `AVENRA_SMOKE=1` drives `Workspace`, which
   lives in the app target where the package's suite cannot reach it, and which is
   where both sync incidents happened.
 
@@ -107,7 +107,7 @@ git working copy, and a conflict copy sitting beside the note it came from.
 
 Desensitisation is by construction, and it took two goes:
 
-* `INKSTONE_DEMO_DEFAULTS` swaps `UserDefaults` for a scratch suite, so the vault
+* `AVENRA_DEMO_DEFAULTS` swaps `UserDefaults` for a scratch suite, so the vault
   list, bindings and interval on screen are the seeded ones.
 * **That was not enough.** The first capture had a private repository name across
   the top of the pane — published by another device into `NSUbiquitousKeyValueStore`,
@@ -121,8 +121,8 @@ Desensitisation is by construction, and it took two goes:
 Three things the capture pipeline needed, each found by the picture being wrong:
 
 * The sandboxed build cannot open a vault outside the file picker, so the harness
-  builds with `Inkstone-Dev.entitlements` — as `record-demo.sh` already did.
-* The Settings window is 560×460, under `inkstone-window.py`'s size floor, so it
+  builds with `Avenra-Dev.entitlements` — as `record-demo.sh` already did.
+* The Settings window is 560×460, under `avenra-window.py`'s size floor, so it
   was not merely deprioritised but invisible; `--title` picks it by name.
 * macOS ships bash 3.2, where expanding an empty array under `set -u` is an
   error — which surfaced as an empty window id, reading as "no window" rather

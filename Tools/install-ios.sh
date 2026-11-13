@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Builds Inkstone for a real iPhone or iPad and installs it.
+# Builds Avenra for a real iPhone or iPad and installs it.
 #
 #     Tools/install-ios.sh            # first connected device
 #     Tools/install-ios.sh "James iPhone 15 Pro"
@@ -17,12 +17,12 @@ KEY_PATH="$HOME/.private_keys/AuthKey_UYGG95M882.p8"
 KEY_ID="UYGG95M882"
 ISSUER_ID="ea36e3b8-3c0a-4a03-819f-24061a386eb4"
 BUILD=".build-device"
-APP="$BUILD/Build/Products/Debug-iphoneos/Inkstone.app"
+APP="$BUILD/Build/Products/Debug-iphoneos/Avenra.app"
 
 wanted="${1:-}"
 
 # --- Find a device -----------------------------------------------------------
-xcrun devicectl list devices --json-output /tmp/inkstone-devices.json >/dev/null 2>&1
+xcrun devicectl list devices --json-output /tmp/avenra-devices.json >/dev/null 2>&1
 
 # Candidates, not the answer: a device paired over Wi-Fi sits at
 # `tunnelState: disconnected` whenever nothing is talking to it, and `devicectl`
@@ -37,7 +37,7 @@ candidates=$(python3 - "$wanted" <<'PY'
 import json, sys
 wanted = sys.argv[1]
 try:
-    devices = json.load(open("/tmp/inkstone-devices.json"))["result"]["devices"]
+    devices = json.load(open("/tmp/avenra-devices.json"))["result"]["devices"]
 except Exception:
     sys.exit(0)
 for d in devices:
@@ -83,7 +83,7 @@ echo "==> Device $device_name ($device)"
 # `generic/platform=iOS` rather than the specific device: it builds the same
 # slice and does not fail when the device drops off Wi-Fi mid-build.
 echo "==> Building"
-xcodebuild -project Inkstone.xcodeproj -scheme Inkstone -configuration Debug \
+xcodebuild -project Avenra.xcodeproj -scheme Avenra -configuration Debug \
   -destination 'generic/platform=iOS' -derivedDataPath "$BUILD" \
   -allowProvisioningUpdates \
   -authenticationKeyPath "$KEY_PATH" -authenticationKeyID "$KEY_ID" \

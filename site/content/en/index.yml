@@ -1,4 +1,4 @@
-title: Inkstone — a Markdown notes app for macOS and iOS
+title: Avenra — a Markdown notes app for macOS and iOS
 description: Plain Markdown files on your own disk. Wikilinks, backlinks, a graph, a canvas and daily notes, in a native app for macOS 26 and iOS 26. No database, no Electron, no account.
 nav:
   label: Sections
@@ -14,16 +14,16 @@ cta:
 hero:
   eyebrow: macOS 26 · iOS 26 · Native SwiftUI
   title: Your notes are files. They should stay that way.
-  lede: Inkstone is a notes app built on plain Markdown in a folder you choose. It reads the vault you already have, writes nothing you cannot open in any other editor, and keeps its own state in a hidden folder you are free to delete.
+  lede: Avenra is a notes app built on plain Markdown in a folder you choose. It reads the vault you already have, writes nothing you cannot open in any other editor, and keeps its own state in a hidden folder you are free to delete.
   note: Free · Apple silicon · English · 简体中文 · 繁體中文
-  video_alt: 'A screen recording of Inkstone on macOS: opening a vault, typing a line of mixed Chinese and English, following a wikilink, and opening the graph.'
+  video_alt: 'A screen recording of Avenra on macOS: opening a vault, typing a line of mixed Chinese and English, following a wikilink, and opening the graph.'
   video_caption: Recorded on macOS 26. Unedited, apart from the dissolves between sections.
 creed:
   title: Three decisions everything else follows from
   sub: They are load-bearing, and they are why the app behaves as it does.
   columns:
   - title: The files are the truth
-    body: There is no database, no import step and no proprietary format. A vault Obsidian created opens here; a vault this app created opens there. If Inkstone disappeared tomorrow you would still have a folder of Markdown.
+    body: There is no database, no import step and no proprietary format. A vault Obsidian created opens here; a vault this app created opens there. If Avenra disappeared tomorrow you would still have a folder of Markdown.
   - title: A broken link is permanent
     body: With no database to repair one, renaming a note rewrites every wikilink that pointed at it, across the whole vault, in the same action. This is the direct consequence of the decision above, not a feature bolted on.
   - title: The engine knows nothing about screens
@@ -36,7 +36,7 @@ features:
       kicker: Editing
       title: Live preview, not a split screen
       body: "Headings, bold, quotes, callouts, checkboxes, tables and code all render in place as you type, with the syntax revealed on the line the cursor is on. Reading mode is a separate, read-only view when you want the page without the scaffolding. Body font, code font and their sizes are set independently. In reading mode the syntax characters are gone rather than hidden, so copying a paragraph gives you prose."
-      alt: 'The Inkstone editor showing live preview: a heading, a mixed Chinese-English paragraph, a checklist, a quote, a callout, an aligned table and a code block, all rendered in place.'
+      alt: 'The Avenra editor showing live preview: a heading, a mixed Chinese-English paragraph, a checklist, a quote, a callout, an aligned table and a code block, all rendered in place.'
     links:
       kicker: Linking
       title: Wikilinks, aliases, blocks, backlinks

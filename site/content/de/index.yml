@@ -1,4 +1,4 @@
-title: Inkstone — eine Markdown-Notizapp für macOS und iOS
+title: Avenra — eine Markdown-Notizapp für macOS und iOS
 description: Reine Markdown-Dateien auf Ihrer eigenen Festplatte. Wikilinks, Backlinks, ein Graph, ein Canvas und Tagesnotizen, in einer nativen App für macOS 26 und iOS 26. Keine Datenbank, kein Electron, kein Konto.
 nav:
   label: Abschnitte
@@ -14,16 +14,16 @@ cta:
 hero:
   eyebrow: macOS 26 · iOS 26 · Natives SwiftUI
   title: Ihre Notizen sind Dateien. Das sollen sie bleiben.
-  lede: Inkstone arbeitet direkt mit reinem Markdown in einem Ordner Ihrer Wahl. Es liest den Tresor, den Sie schon haben, schreibt nichts, was sich nicht in jedem anderen Editor öffnen ließe, und legt seinen eigenen Zustand in einem versteckten Ordner ab, den Sie jederzeit löschen dürfen.
+  lede: Avenra arbeitet direkt mit reinem Markdown in einem Ordner Ihrer Wahl. Es liest den Tresor, den Sie schon haben, schreibt nichts, was sich nicht in jedem anderen Editor öffnen ließe, und legt seinen eigenen Zustand in einem versteckten Ordner ab, den Sie jederzeit löschen dürfen.
   note: Kostenlos · Apple Silicon · English · 简体中文 · 繁體中文
-  video_alt: 'Eine Bildschirmaufnahme von Inkstone unter macOS: ein Tresor wird geöffnet, eine Zeile aus chinesischer und lateinischer Schrift getippt, einem Wikilink gefolgt und der Graph geöffnet.'
+  video_alt: 'Eine Bildschirmaufnahme von Avenra unter macOS: ein Tresor wird geöffnet, eine Zeile aus chinesischer und lateinischer Schrift getippt, einem Wikilink gefolgt und der Graph geöffnet.'
   video_caption: Aufgenommen unter macOS 26. Ungeschnitten, bis auf die Blenden zwischen den Abschnitten.
 creed:
   title: Drei Entscheidungen, aus denen alles Übrige folgt
   sub: Sie sind tragend, und sie erklären, warum sich die App so verhält.
   columns:
   - title: Die Dateien sind die Wahrheit
-    body: Keine Datenbank, kein Importschritt, kein proprietäres Format. Ein von Obsidian angelegter Tresor öffnet sich hier, einer von hier dort. Wäre Inkstone morgen verschwunden, hätten Sie immer noch einen Ordner voller Markdown.
+    body: Keine Datenbank, kein Importschritt, kein proprietäres Format. Ein von Obsidian angelegter Tresor öffnet sich hier, einer von hier dort. Wäre Avenra morgen verschwunden, hätten Sie immer noch einen Ordner voller Markdown.
   - title: Ein toter Link bleibt tot
     body: Weil es keine Datenbank gibt, die ihn reparieren könnte, schreibt das Umbenennen einer Notiz jeden Wikilink, der auf sie zeigte, im selben Zug im ganzen Tresor um. Das ist die direkte Folge der Entscheidung darüber, keine nachträglich angebaute Funktion.
   - title: Die Engine weiß nichts von Bildschirmen
@@ -36,7 +36,7 @@ features:
       kicker: Schreiben
       title: Live-Vorschau statt geteiltem Fenster
       body: "Überschriften, Fettung, Zitate, Callouts, Checkboxen, Tabellen und Code werden beim Tippen an Ort und Stelle gesetzt; die Syntax zeigt sich nur in der Zeile, in der die Einfügemarke steht. Der Lesemodus ist eine eigene, schreibgeschützte Ansicht. Textschrift, Codeschrift und ihre Größen werden unabhängig voneinander eingestellt. Im Lesemodus sind die Syntaxzeichen entfernt statt versteckt — ein kopierter Absatz enthält nur den Text."
-      alt: 'Der Editor von Inkstone mit Live-Vorschau: Überschrift, ein Absatz aus gemischt chinesischer und lateinischer Schrift, eine Checkliste, ein Zitat, ein Callout, eine ausgerichtete Tabelle und ein Codeblock.'
+      alt: 'Der Editor von Avenra mit Live-Vorschau: Überschrift, ein Absatz aus gemischt chinesischer und lateinischer Schrift, eine Checkliste, ein Zitat, ein Callout, eine ausgerichtete Tabelle und ein Codeblock.'
     links:
       kicker: Verknüpfen
       title: Wikilinks, Aliase, Blöcke, Backlinks

@@ -1,7 +1,7 @@
-# Inkstone — UI/UX, theming, and app icon
+# Avenra — UI/UX, theming, and app icon
 
 Started 2026-08-16 (Sydney). Continues the 2026-08-15 build session recorded in
-`/Users/james/Dev/inkstone/HANDOFF.md`.
+`/Users/gankin/Documents/Projects/Avenra/HANDOFF.md`.
 
 ## Goal
 
@@ -40,7 +40,7 @@ a real display attached, the hypothesis is wrong.
 
 ## Phase 2 — dark/light correctness ✅
 
-**Root cause found.** `InkstoneApp` read `@Environment(\.colorScheme)` inside the
+**Root cause found.** `AvenraApp` read `@Environment(\.colorScheme)` inside the
 `App` struct. That environment is not attached to a rendered window, so it always
 reported `.light` and never updated. Every `.system` user got the light palette
 even with macOS in dark mode — which is exactly what the first screenshots showed.
@@ -71,7 +71,7 @@ bounding box, and downsamples all sizes from one master.
 
 Three hand-drawn attempts were discarded first — a top-down slab kept reading as
 a monitor, and a centred crescent read as a moon. The shipped artwork is an
-inkstone disc with a crescent ink pool and a plain cinnabar seal. The seal is
+avenra disc with a crescent ink pool and a plain cinnabar seal. The seal is
 deliberately **blank**: generated seal script came out as garbled pseudo-Chinese,
 which a Chinese reader spots instantly.
 
@@ -122,7 +122,7 @@ exactly double. That draft was visibly ragged; measuring fixed it.
 The largest untouched piece of the original brief.
 
 - `AttachmentKind`, `AttachmentIndex` and `SyncFilePolicy` in
-  `InkstoneCore/Vault/Attachments.swift`, with 14 tests.
+  `AvenraCore/Vault/Attachments.swift`, with 14 tests.
 - Images embedded as `![[file.png]]` render inline. **Not** with
   `NSTextAttachment`: TextKit 1 only draws attachments for the U+FFFC character,
   and inserting one would add bytes the user never typed. The markup is
@@ -152,7 +152,7 @@ anyone adds. Worth a proper `decodeIfPresent` pass on all ~30 fields.
 
 ### One unreproduced observation — do not treat as a known bug yet
 
-After a UI session, `Samples/Inkstone Demo/Map.canvas` came back rewritten, and a
+After a UI session, `Samples/Avenra Demo/Map.canvas` came back rewritten, and a
 sorted-key comparison against `HEAD` reported the content as **not** semantically
 identical. The file was reverted before the difference was analysed, and it has
 not reproduced since: opening the vault leaves the canvas byte-identical, and so
@@ -168,7 +168,7 @@ round-trip *unit* test passes, so any bug is in the view layer, not the model.
 
 - **Decide whether the icon is final.** It is generated, committed, and shipping
   in the build; say the word and it changes. Artwork:
-  `/Users/james/Dev/inkstone/Tools/icon-artwork.png`
+  `/Users/gankin/Documents/Projects/Avenra/Tools/icon-artwork.png`
 - **iCloud container** still has to be created in the developer portal before the
   entitlement can be uncommented (HANDOFF §6). Blocks iCloud sync.
 - Attachments and per-type sync filters are **done** (Phase 7), but real sync
@@ -256,27 +256,27 @@ network boundary is tested; the round trip is not.
 
 **Resolved.** Kept below for the record; nothing here is outstanding.
 
-Inkstone's iCloud code is written and handles the container being absent, so the
+Avenra's iCloud code is written and handles the container being absent, so the
 app degrades cleanly today. What is missing is the container itself: it must
 exist in the developer portal before Xcode can mint a provisioning profile for
 it. Enabling the entitlement first makes *every* local build fail to sign, which
-is why the keys sit commented in `App/Resources/Inkstone.entitlements`.
+is why the keys sit commented in `App/Resources/Avenra.entitlements`.
 
 Facts needed:
 
-  - Team:         Orris Technology — K9YT36SP4B
-  - Bundle ID:    com.orris.inkstone
-  - Container ID: iCloud.com.orris.inkstone   (exactly this, "iCloud." prefix included)
+  - Team:         GanKin — K9YT36SP4B
+  - Bundle ID:    com.gankin.avenra
+  - Container ID: iCloud.com.gankin.avenra   (exactly this, "iCloud." prefix included)
 
 ### Easiest route — let Xcode create it
 
-1. `open /Users/james/Dev/inkstone/Inkstone.xcodeproj`
-2. Select the **Inkstone** project in the navigator, then the **Inkstone**
+1. `open /Users/gankin/Documents/Projects/Avenra/Avenra.xcodeproj`
+2. Select the **Avenra** project in the navigator, then the **Avenra**
    target, then the **Signing & Capabilities** tab.
-3. Check Team reads *Orris Technology*.
+3. Check Team reads *GanKin*.
 4. Click **+ Capability**, search *iCloud*, double-click it.
 5. Tick **iCloud Documents**.
-6. Under Containers click **+**, enter `iCloud.com.orris.inkstone`, confirm.
+6. Under Containers click **+**, enter `iCloud.com.gankin.avenra`, confirm.
 7. Wait for the spinner to settle. Xcode registers the container in the portal
    and refreshes the profile.
 
@@ -291,14 +291,14 @@ Some accounts will not let Xcode register containers. Then do it by hand:
 1. developer.apple.com/account → **Certificates, Identifiers & Profiles**
 2. **Identifiers** → change the dropdown at the top right from *App IDs* to
    **iCloud Containers** → **+**
-3. Description `Inkstone`, Identifier `iCloud.com.orris.inkstone` → Continue →
+3. Description `Avenra`, Identifier `iCloud.com.gankin.avenra` → Continue →
    Register
-4. Back to **Identifiers** → *App IDs* → `com.orris.inkstone` → tick **iCloud**
+4. Back to **Identifiers** → *App IDs* → `com.gankin.avenra` → tick **iCloud**
    → **Configure** → select the container just made → Save
 
 ### Then
 
-Tell me, and I re-enable these three keys in `Inkstone.entitlements`:
+Tell me, and I re-enable these three keys in `Avenra.entitlements`:
 
     com.apple.developer.ubiquity-container-identifiers
     com.apple.developer.icloud-container-identifiers
@@ -318,7 +318,7 @@ wrong thing.
 
 Done with the App Store Connect API (key `UYGG95M882`, Admin):
 
-1. Verified the account first, read-only — `com.orris.inkstone` exists as bundle
+1. Verified the account first, read-only — `com.gankin.avenra` exists as bundle
    ID `52S6ATX4NV`, team `K9YT36SP4B`. Never write to a developer account before
    confirming it is the right one.
 2. `POST /v1/devices` registered this Mac (`00006050-001468EA1131401C`).
@@ -329,10 +329,10 @@ Done with the App Store Connect API (key `UYGG95M882`, Admin):
 
 Verified end to end:
 
-  - The profile carries `iCloud.com.orris.inkstone` and team `K9YT36SP4B`.
+  - The profile carries `iCloud.com.gankin.avenra` and team `K9YT36SP4B`.
   - The signed app's entitlements carry the container.
   - At runtime the container resolves and its Documents folder is writable:
-    `INKSTONE_ICLOUD_CHECK=1 …/Inkstone` prints AVAILABLE.
+    `AVENRA_ICLOUD_CHECK=1 …/Avenra` prints AVAILABLE.
   - **Ordinary builds still work with no extra flags**, both the sandboxed and
     the unsandboxed dev variant, so day-to-day iteration is unchanged.
 
@@ -389,7 +389,7 @@ you can tick the box in front of you.
 
 Task markers now collapse regardless of the caret (`hide`, which skips the caret
 check; `conceal` keeps it for everything else). Source mode still shows source.
-`INKSTONE_CHECKBOX_DUMP=1` reproduces the check.
+`AVENRA_CHECKBOX_DUMP=1` reproduces the check.
 
 ## GitHub sync made usable — 2026-08-16
 
@@ -420,7 +420,7 @@ token with Contents: read *and* write.
 
 ## GitHub sync verified end to end — 2026-08-16
 
-Against a throwaway private repository (`iamzifei/inkstone-sync-test`) with a
+Against a throwaway private repository (`GanKin/Avenra-sync-test`) with a
 write-scoped token. Upload, read back and delete all pass, alongside the pull
 path. 17 integration tests; the repository is left clean.
 

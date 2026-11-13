@@ -1,5 +1,5 @@
 import SwiftUI
-import InkstoneCore
+import AvenraCore
 
 /// Month calendar for daily notes, plus an agenda built from task lines.
 ///

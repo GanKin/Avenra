@@ -1,6 +1,6 @@
 import Foundation
 import Security
-import InkstoneCore
+import AvenraCore
 
 /// Resolves the app's own iCloud container, and says why when it cannot.
 ///
@@ -19,7 +19,7 @@ import InkstoneCore
 enum ICloudContainer {
 
     /// The container this app owns, as named in its entitlements.
-    static let identifier = "iCloud.com.orris.inkstone"
+    static let identifier = "iCloud.com.gankin.avenra"
 
     /// Diagnoses the container, off the main thread.
     static func resolve(_ identifier: String? = nil) async -> ICloudAvailability {
@@ -51,12 +51,12 @@ enum ICloudContainer {
     static func vaultURL(in container: URL) -> URL {
         container
             .appending(path: "Documents", directoryHint: .isDirectory)
-            .appending(path: "Inkstone", directoryHint: .isDirectory)
+            .appending(path: "Avenra", directoryHint: .isDirectory)
     }
 
     /// Creates the vault folder inside the container, if it isn't there already.
     ///
-    /// Shared by the button and by the `INKSTONE_ICLOUD_CHECK=create` hook, so
+    /// Shared by the button and by the `AVENRA_ICLOUD_CHECK=create` hook, so
     /// what the hook verifies is the path that actually ships rather than a
     /// second copy of it that can drift.
     static func createVaultFolder(in container: URL) throws -> URL {
@@ -71,7 +71,7 @@ enum ICloudContainer {
     ///
     /// Answered differently per platform, because the question only has teeth on
     /// one of them. On macOS the entitlements file is chosen at build time and a
-    /// test harness swaps in `Inkstone-Dev.entitlements`, which drops iCloud
+    /// test harness swaps in `Avenra-Dev.entitlements`, which drops iCloud
     /// entirely — that swap is what produced a false "the container doesn't
     /// exist", so the macOS answer is read from the running signature and
     /// nothing else. iOS has no such harness path and no public API to read your
@@ -105,7 +105,7 @@ extension ICloudAvailability {
             // Not the user's fault and not fixable by them: this build simply
             // cannot use iCloud. Say so rather than sending them to Settings.
             return String(localized: """
-                This build of Inkstone was not signed for iCloud, so it can't create \
+                This build of Avenra was not signed for iCloud, so it can't create \
                 a vault there. Open any folder as a vault instead.
                 """)
         case .notSignedIn:
@@ -115,7 +115,7 @@ extension ICloudAvailability {
                 """)
         case .unreachable:
             return String(localized: """
-                iCloud Drive is signed in, but Inkstone's storage isn't responding \
+                iCloud Drive is signed in, but Avenra's storage isn't responding \
                 yet. It often sorts itself out in a minute or two — or open any \
                 folder as a vault.
                 """)

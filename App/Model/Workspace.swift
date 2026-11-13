@@ -1,7 +1,7 @@
 import Foundation
 import Observation
 import SwiftUI
-import InkstoneCore
+import AvenraCore
 
 /// What an open tab is showing.
 enum TabContent: Hashable, Identifiable {
@@ -114,7 +114,7 @@ final class Workspace {
     func embeddedNoteText(for link: WikiLink, from source: URL) -> String? {
         #if DEBUG
         func trace(_ why: String) {
-            if ProcessInfo.processInfo.environment["INKSTONE_EMBED_TRACE"] != nil {
+            if ProcessInfo.processInfo.environment["AVENRA_EMBED_TRACE"] != nil {
                 FileHandle.standardError.write(Data("[embed] \(link.target): \(why)\n".utf8))
             }
         }
@@ -293,7 +293,7 @@ final class Workspace {
     /// Reopens the most recently used vault, if none is open.
     ///
     /// Lives here rather than in the App struct because a background launch
-    /// needs it too. `InkstoneApp` opened the last vault from `.onAppear`, which
+    /// needs it too. `AvenraApp` opened the last vault from `.onAppear`, which
     /// only fires when a scene is actually rendered — and iOS waking the app for
     /// a background task renders nothing. Sync would then find no vault, do
     /// nothing, and report success.
@@ -332,7 +332,7 @@ final class Workspace {
         }
     }
 
-    /// Removes a vault from Inkstone's list, leaving the folder on disk alone.
+    /// Removes a vault from Avenra's list, leaving the folder on disk alone.
     ///
     /// The registry has had `forget` since the beginning and nothing ever called
     /// it, so a vault added by mistake could not be got rid of. That is how a
@@ -458,7 +458,7 @@ final class Workspace {
     ///
     /// If it is, git is already syncing this folder, and it does it properly:
     /// three-way merges, a history, conflict markers a person resolves.
-    /// Inkstone's sync is file-level and last-write-wins — it has no merge base
+    /// Avenra's sync is file-level and last-write-wins — it has no merge base
     /// and answers a conflict by writing a second copy of the file. Running both
     /// over one folder is not redundancy, it is two mechanisms overwriting each
     /// other's results, which is what happened to a user's vault: 1409 API
@@ -540,7 +540,7 @@ final class Workspace {
     /// Moves the old single global repository onto a vault, if that vault can
     /// show it was the one using it.
     ///
-    /// The proof is the vault's own `.inkstone/sync.json`, which records the
+    /// The proof is the vault's own `.avenra/sync.json`, which records the
     /// repository of its last run. A vault that never synced to that repository
     /// has no such record and gets no binding.
     ///

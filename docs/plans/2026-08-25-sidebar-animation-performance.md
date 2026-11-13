@@ -14,11 +14,11 @@ look for it:
 
 | | share of main thread |
 | --- | --- |
-| **`InkstoneTextView.resetCursorRects`** | **54.0%** |
+| **`AvenraTextView.resetCursorRects`** | **54.0%** |
 | `_NSFastFillAllLayoutHolesForGlyphRange` (called from it) | 31.5% |
 | `EditorRenderer.draw` | 0.2% |
 
-`resetCursorRects` enumerated `.inkstoneBlockFill` and `.inkstoneWikiLink` across
+`resetCursorRects` enumerated `.avenraBlockFill` and `.avenraWikiLink` across
 the **entire document** and asked the layout manager for a rect for each hit.
 Every one of those makes TextKit fill its layout holes, so the method laid out
 the whole note — and **AppKit calls it on every tracking-area update**, which a

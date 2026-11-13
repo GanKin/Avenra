@@ -56,12 +56,12 @@ card() {  # card <slug> <font-css> <lang-attr> <cjk-stack> <headline> <sub> <h1-
 </style></head><body>
   <div class="mark">
     <img src="icon.png" alt="">
-    <span class="name">Inkstone</span>
-    <span class="cjk">墨砚</span>
+    <span class="name">Avenra</span>
+    <span class="cjk">思野</span>
   </div>
   <h1>$5</h1>
   <p>$6</p>
-  <div class="foot">inkslab.app &nbsp;·&nbsp; macOS 26 &nbsp;·&nbsp; iOS 26</div>
+  <div class="foot">gankin.github.io/Avenra &nbsp;·&nbsp; macOS 26 &nbsp;·&nbsp; iOS 26</div>
 </body></html>
 HTML
   cp "$OUT/icon.png" "$WORK/icon.png"

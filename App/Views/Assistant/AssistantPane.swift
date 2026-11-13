@@ -1,6 +1,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
-import InkstoneCore
+import AvenraCore
 
 /// The assistant, living in the inspector beside the outline and backlinks.
 ///

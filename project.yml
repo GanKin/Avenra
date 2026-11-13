@@ -1,6 +1,6 @@
-name: Inkstone
+name: Avenra
 options:
-  bundleIdPrefix: com.orris
+  bundleIdPrefix: com.gankin
   developmentLanguage: en
   deploymentTarget:
     macOS: "26.0"
@@ -9,8 +9,8 @@ options:
   generateEmptyDirectories: true
 
 packages:
-  InkstoneCore:
-    path: Packages/InkstoneCore
+  AvenraCore:
+    path: Packages/AvenraCore
   # LaTeX maths typesetting. Pure Swift with its own bundled maths fonts, so no
   # JavaScript engine and no WebView — MathJax/KaTeX would mean embedding a whole
   # browser to render `$x^2$` in a note. MIT licensed.
@@ -36,20 +36,20 @@ settings:
     SWIFT_EMIT_LOC_STRINGS: YES
 
 targets:
-  Inkstone:
+  Avenra:
     type: application
     supportedDestinations: [macOS, iOS]
     sources:
       - path: App
     dependencies:
-      - package: InkstoneCore
+      - package: AvenraCore
       - package: SwiftMath
       - package: Sparkle
         destinationFilters: [macOS]
     info:
       path: App/Resources/Info.plist
       properties:
-        CFBundleDisplayName: Inkstone
+        CFBundleDisplayName: Avenra
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         LSApplicationCategoryType: public.app-category.productivity
@@ -87,17 +87,17 @@ targets:
           - fetch
           - processing
         BGTaskSchedulerPermittedIdentifiers:
-          - com.orris.inkstone.sync.refresh
-          - com.orris.inkstone.sync.processing
+          - com.gankin.avenra.sync.refresh
+          - com.gankin.avenra.sync.processing
           # Wildcard, per the BGContinuedProcessingTaskRequest header: registered
           # once in this form, submitted with a unique suffix per sync.
-          - com.orris.inkstone.sync.continued.*
+          - com.gankin.avenra.sync.continued.*
         # Sparkle. The feed is served from the site rather than from
         # raw.githubusercontent.com/.../main like the sibling apps: main is not
         # this repository's trunk (see docs/plans/2026-08-20-website-and-domain.md),
         # and an update feed should not depend on which branch is currently sane.
-        # inkslab.app is ours, is HTTPS, and is generated from site/.
-        SUFeedURL: https://inkslab.app/appcast.xml
+        # gankin.github.io/Avenra is ours, is HTTPS, and is generated from site/.
+        SUFeedURL: https://gankin.github.io/Avenra/appcast.xml
         # The public half of the EdDSA key in the login keychain, shared with
         # AudioSwitch, Candela and ClipStack — it is the developer's signing
         # identity, not a per-app secret. Sparkle checks every download against it.
@@ -113,20 +113,20 @@ targets:
               public.filename-extension: [canvas]
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.orris.inkstone
+        PRODUCT_BUNDLE_IDENTIFIER: com.gankin.avenra
         # Ship all three UI languages; the in-app picker overrides the system
         # language by swapping the SwiftUI locale.
         SWIFT_EMIT_LOC_STRINGS: YES
-        PRODUCT_NAME: Inkstone
+        PRODUCT_NAME: Avenra
         GENERATE_INFOPLIST_FILE: NO
         # One target, two platforms, two entitlement files. The macOS one carries
         # App Sandbox keys and Sparkle's temporary-exception mach-lookup, neither
         # of which belongs on iOS — and the latter is rejected outright by App
         # Store validation. The bracketed condition is how a single target picks
         # per-SDK.
-        CODE_SIGN_ENTITLEMENTS: App/Resources/Inkstone.entitlements
-        "CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]": App/Resources/Inkstone-iOS.entitlements
-        "CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]": App/Resources/Inkstone-iOS.entitlements
+        CODE_SIGN_ENTITLEMENTS: App/Resources/Avenra.entitlements
+        "CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]": App/Resources/Avenra-iOS.entitlements
+        "CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]": App/Resources/Avenra-iOS.entitlements
         ENABLE_HARDENED_RUNTIME: YES
         SWIFT_APPROACHABLE_CONCURRENCY: YES
         # A framework sits at Contents/Frameworks on macOS and at

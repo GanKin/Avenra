@@ -1,5 +1,5 @@
 import Foundation
-import InkstoneCore
+import AvenraCore
 
 /// A folder of Claude Code skills, read with the user's permission.
 ///
@@ -25,7 +25,7 @@ final class SkillLibrary {
     /// or a bookmark that no longer resolves.
     private(set) var problem: String?
 
-    private let defaultsKey = "com.orris.inkstone.skills.bookmark"
+    private let defaultsKey = "com.gankin.avenra.skills.bookmark"
     private var accessing: URL?
 
     init() { restore() }

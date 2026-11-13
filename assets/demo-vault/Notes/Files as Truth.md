@@ -12,4 +12,4 @@ tags: [principle, 原则]
 > [!warning] 这不是可选项
 > 一旦允许「稍后修复」，就等于承认有一个第二真相源。
 
-参见 [[Projects/Inkstone]]。
+参见 [[Projects/Avenra]]。

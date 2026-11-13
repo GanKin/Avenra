@@ -1,10 +1,10 @@
 #!/bin/bash
 #
-# Builds a signed, notarised Inkstone.dmg that opens on any Mac.
+# Builds a signed, notarised Avenra.dmg that opens on any Mac.
 #
 #     Tools/package-dmg.sh [--install]
 #
-# --install also replaces /Applications/Inkstone.app with the result.
+# --install also replaces /Applications/Avenra.app with the result.
 #
 # Needs the App Store Connect API key below, which stands in for an Xcode
 # account: xcodebuild run from a terminal reports "No Accounts" even when Xcode
@@ -24,7 +24,7 @@ TEAM_ID="K9YT36SP4B"
 KEY_PATH="$HOME/.private_keys/AuthKey_UYGG95M882.p8"
 KEY_ID="UYGG95M882"
 ISSUER_ID="ea36e3b8-3c0a-4a03-819f-24061a386eb4"
-PROFILE_NAME="Inkstone Developer ID"
+PROFILE_NAME="Avenra Developer ID"
 
 BUILD=".build-release"
 NOTARY=(--key "$KEY_PATH" --key-id "$KEY_ID" --issuer "$ISSUER_ID")
@@ -42,8 +42,8 @@ mkdir -p "$BUILD"
 
 # --- Archive ---------------------------------------------------------------
 echo "==> Archiving"
-xcodebuild -project Inkstone.xcodeproj -scheme Inkstone -configuration Release \
-  -destination 'platform=macOS' -archivePath "$BUILD/Inkstone.xcarchive" \
+xcodebuild -project Avenra.xcodeproj -scheme Avenra -configuration Release \
+  -destination 'platform=macOS' -archivePath "$BUILD/Avenra.xcarchive" \
   -allowProvisioningUpdates \
   -authenticationKeyPath "$KEY_PATH" -authenticationKeyID "$KEY_ID" \
   -authenticationKeyIssuerID "$ISSUER_ID" \
@@ -68,26 +68,26 @@ cat > "$BUILD/ExportOptions.plist" <<EOF
   <key>signingStyle</key><string>manual</string>
   <key>signingCertificate</key><string>Developer ID Application</string>
   <key>provisioningProfiles</key><dict>
-    <key>com.orris.inkstone</key><string>$PROFILE_NAME</string>
+    <key>com.gankin.avenra</key><string>$PROFILE_NAME</string>
   </dict>
   <key>destination</key><string>export</string>
 </dict></plist>
 EOF
 
 echo "==> Exporting"
-xcodebuild -exportArchive -archivePath "$BUILD/Inkstone.xcarchive" \
+xcodebuild -exportArchive -archivePath "$BUILD/Avenra.xcarchive" \
   -exportOptionsPlist "$BUILD/ExportOptions.plist" \
   -exportPath "$BUILD/export" | grep -E 'EXPORT SUCCEEDED|error:'
 [[ ${PIPESTATUS[0]} -eq 0 ]] || { echo "Export failed." >&2; exit 1; }
 
-APP="$BUILD/export/Inkstone.app"
+APP="$BUILD/export/Avenra.app"
 VERSION=$(plutil -extract CFBundleShortVersionString raw "$APP/Contents/Info.plist")
-DMG="$BUILD/Inkstone-$VERSION.dmg"
+DMG="$BUILD/Avenra-$VERSION.dmg"
 
 # --- Notarise the app ------------------------------------------------------
 echo "==> Notarising the app (a few minutes)"
-ditto -c -k --keepParent "$APP" "$BUILD/Inkstone.zip"
-xcrun notarytool submit "$BUILD/Inkstone.zip" --wait --timeout 30m "${NOTARY[@]}" \
+ditto -c -k --keepParent "$APP" "$BUILD/Avenra.zip"
+xcrun notarytool submit "$BUILD/Avenra.zip" --wait --timeout 30m "${NOTARY[@]}" \
   | tail -3
 xcrun stapler staple "$APP"
 
@@ -97,7 +97,7 @@ rm -rf "$BUILD/dmg"
 mkdir -p "$BUILD/dmg"
 cp -R "$APP" "$BUILD/dmg/"
 ln -s /Applications "$BUILD/dmg/Applications"
-hdiutil create -volname "Inkstone" -srcfolder "$BUILD/dmg" -ov -format UDZO "$DMG" >/dev/null
+hdiutil create -volname "Avenra" -srcfolder "$BUILD/dmg" -ov -format UDZO "$DMG" >/dev/null
 
 echo "==> Notarising the disk image"
 xcrun notarytool submit "$DMG" --wait --timeout 30m "${NOTARY[@]}" | tail -3
@@ -120,7 +120,7 @@ xcrun stapler validate "$APP"
 # that the app could not start. The only check that catches this is starting it.
 echo "==> Launching it, which is the only check that catches a missing library"
 LAUNCH_LOG="$BUILD/launch-check.log"
-"$APP/Contents/MacOS/Inkstone" >"$LAUNCH_LOG" 2>&1 &
+"$APP/Contents/MacOS/Avenra" >"$LAUNCH_LOG" 2>&1 &
 launch_pid=$!
 sleep 8
 if ! kill -0 "$launch_pid" 2>/dev/null; then
@@ -146,31 +146,31 @@ if $install_app; then
   # leaves it running the old code with nothing on screen to say so — the app
   # looks updated, behaves like the previous build, and the next bug report is
   # about a version that no longer exists.
-  if pgrep -f '/Applications/Inkstone.app' >/dev/null; then
+  if pgrep -f '/Applications/Avenra.app' >/dev/null; then
     echo "    quitting the running copy"
-    osascript -e 'tell application "Inkstone" to quit' >/dev/null 2>&1 || true
+    osascript -e 'tell application "Avenra" to quit' >/dev/null 2>&1 || true
     for _ in $(seq 1 30); do
-      pgrep -f '/Applications/Inkstone.app' >/dev/null || break
+      pgrep -f '/Applications/Avenra.app' >/dev/null || break
       sleep 0.5
     done
-    if pgrep -f '/Applications/Inkstone.app' >/dev/null; then
-      echo "Inkstone would not quit — install aborted rather than replacing a running app." >&2
+    if pgrep -f '/Applications/Avenra.app' >/dev/null; then
+      echo "Avenra would not quit — install aborted rather than replacing a running app." >&2
       exit 1
     fi
   fi
 
-  rm -rf /Applications/Inkstone.app
-  ditto "$APP" /Applications/Inkstone.app
+  rm -rf /Applications/Avenra.app
+  ditto "$APP" /Applications/Avenra.app
 
   # Confirm what is installed is what was just built, by code signature rather
   # than by timestamp: a copy that silently failed would otherwise pass.
   built=$(codesign -dvvv "$APP" 2>&1 | awk -F= '/^CDHash/ {print $2; exit}')
-  installed=$(codesign -dvvv /Applications/Inkstone.app 2>&1 | awk -F= '/^CDHash/ {print $2; exit}')
+  installed=$(codesign -dvvv /Applications/Avenra.app 2>&1 | awk -F= '/^CDHash/ {print $2; exit}')
   if [[ -z "$installed" || "$built" != "$installed" ]]; then
     echo "Installed app does not match the build ($built vs $installed)." >&2
     exit 1
   fi
-  echo "    verified: /Applications/Inkstone.app matches this build"
+  echo "    verified: /Applications/Avenra.app matches this build"
 fi
 
 echo

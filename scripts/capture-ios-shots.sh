@@ -24,10 +24,10 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUT="${1:-$ROOT/assets/ios-shots}"
 VAULT="$ROOT/assets/demo-vault"
-BUNDLE="com.orris.inkstone"
-PHONE="${INKSTONE_PHONE:-iPhone 17 Pro Max}"   # 6.9", the size Apple asks for
-PAD="${INKSTONE_PAD:-iPad Pro 13-inch (M5)}"   # 13", required because the app ships for iPad
-APP="$ROOT/.build-sim/Build/Products/Debug-iphonesimulator/Inkstone.app"
+BUNDLE="com.gankin.avenra"
+PHONE="${AVENRA_PHONE:-iPhone 17 Pro Max}"   # 6.9", the size Apple asks for
+PAD="${AVENRA_PAD:-iPad Pro 13-inch (M5)}"   # 13", required because the app ships for iPad
+APP="$ROOT/.build-sim/Build/Products/Debug-iphonesimulator/Avenra.app"
 
 command -v cliclick >/dev/null || { echo "error: cliclick not installed" >&2; exit 1; }
 mkdir -p "$OUT" "$OUT/ipad"
@@ -35,7 +35,7 @@ mkdir -p "$OUT" "$OUT/ipad"
 build_for() {
   echo "==> Building for $1"
   # Debug, because the vault hook that makes this scriptable is `#if DEBUG`.
-  xcodebuild -project "$ROOT/Inkstone.xcodeproj" -scheme Inkstone -configuration Debug \
+  xcodebuild -project "$ROOT/Avenra.xcodeproj" -scheme Avenra -configuration Debug \
     -destination "platform=iOS Simulator,name=$1" -derivedDataPath "$ROOT/.build-sim" \
     build 2>&1 | grep -E '^\*\* BUILD|error:'
 }
@@ -46,7 +46,7 @@ seed() {  # seed <device>
   xcrun simctl install "$1" "$APP"
   # First launch creates the container and the scratch vault; only then is there
   # somewhere to copy the richer demo vault into.
-  SIMCTL_CHILD_INKSTONE_SCRATCH_VAULT=1 xcrun simctl launch "$1" "$BUNDLE" >/dev/null 2>&1
+  SIMCTL_CHILD_AVENRA_SCRATCH_VAULT=1 xcrun simctl launch "$1" "$BUNDLE" >/dev/null 2>&1
   sleep 7
   local container
   container="$(xcrun simctl get_app_container "$1" "$BUNDLE" data)"
@@ -60,10 +60,10 @@ shoot() {  # shoot <device> <output-path> [note]
   xcrun simctl terminate "$1" "$BUNDLE" 2>/dev/null || true
   sleep 1
   if [ -n "${3:-}" ]; then
-    SIMCTL_CHILD_INKSTONE_SCRATCH_VAULT=1 SIMCTL_CHILD_INKSTONE_OPEN_NOTE="$3" \
+    SIMCTL_CHILD_AVENRA_SCRATCH_VAULT=1 SIMCTL_CHILD_AVENRA_OPEN_NOTE="$3" \
       xcrun simctl launch "$1" "$BUNDLE" >/dev/null 2>&1
   else
-    SIMCTL_CHILD_INKSTONE_SCRATCH_VAULT=1 xcrun simctl launch "$1" "$BUNDLE" >/dev/null 2>&1
+    SIMCTL_CHILD_AVENRA_SCRATCH_VAULT=1 xcrun simctl launch "$1" "$BUNDLE" >/dev/null 2>&1
   fi
   sleep 7
   xcrun simctl io "$1" screenshot "$2" >/dev/null 2>&1

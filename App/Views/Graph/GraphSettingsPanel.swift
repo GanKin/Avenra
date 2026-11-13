@@ -1,5 +1,5 @@
 import SwiftUI
-import InkstoneCore
+import AvenraCore
 
 /// The graph's settings panel: Filters, Groups, Display, Forces.
 ///

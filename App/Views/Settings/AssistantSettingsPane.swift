@@ -1,5 +1,5 @@
 import SwiftUI
-import InkstoneCore
+import AvenraCore
 
 /// Settings for the assistant panel: which models, which keys, what it sees.
 ///

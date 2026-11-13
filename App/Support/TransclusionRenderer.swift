@@ -1,5 +1,5 @@
 import Foundation
-import InkstoneCore
+import AvenraCore
 
 #if os(macOS)
 import AppKit
@@ -36,7 +36,7 @@ final class TransclusionRenderer {
     func image(for text: String, style: Style, width: CGFloat) -> PlatformImage? {
         #if DEBUG
         func trace(_ why: String) {
-            if ProcessInfo.processInfo.environment["INKSTONE_EMBED_TRACE"] != nil {
+            if ProcessInfo.processInfo.environment["AVENRA_EMBED_TRACE"] != nil {
                 FileHandle.standardError.write(Data("[render] \(why)\n".utf8))
             }
         }

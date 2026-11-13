@@ -6,7 +6,7 @@ import AppKit
 import UIKit
 #endif
 
-import InkstoneCore
+import AvenraCore
 
 /// Paints everything in the editor that is not text.
 ///
@@ -156,7 +156,7 @@ struct EditorRenderer {
     /// A chevron on a callout header: down when open, right when folded.
     private func drawCalloutDisclosures(in rect: CGRect) {
         storage.enumerateAttribute(
-            .inkstoneCalloutFold,
+            .avenraCalloutFold,
             in: NSRange(location: 0, length: storage.length)
         ) { value, range, _ in
             guard let folded = value as? Bool,
@@ -186,7 +186,7 @@ struct EditorRenderer {
     func calloutDisclosureHit(at point: CGPoint) -> NSRange? {
         var hit: NSRange?
         storage.enumerateAttribute(
-            .inkstoneCalloutFold,
+            .avenraCalloutFold,
             in: NSRange(location: 0, length: storage.length)
         ) { value, range, stop in
             guard value != nil, let box = calloutDisclosureRect(for: range) else { return }
@@ -210,7 +210,7 @@ struct EditorRenderer {
     /// shows.
     func drawBlockFills(in rect: CGRect) {
         storage.enumerateAttribute(
-            .inkstoneBlockFill,
+            .avenraBlockFill,
             in: NSRange(location: 0, length: storage.length)
         ) { value, range, _ in
             guard value != nil else { return }
@@ -219,7 +219,7 @@ struct EditorRenderer {
             // glyphs alone would not.
             guard let panel = blockPanel(for: range), panel.intersects(rect) else { return }
 
-            if storage.attribute(.inkstoneTableBlock, at: range.location, effectiveRange: nil) != nil {
+            if storage.attribute(.avenraTableBlock, at: range.location, effectiveRange: nil) != nil {
                 drawTableChrome(for: range, panel: panel)
             } else {
                 // Same ink-based geometry as a table. Drawn from the line
@@ -404,7 +404,7 @@ struct EditorRenderer {
     /// position, so they mark the boundary whether the columns line up or not.
     private func drawColumnSeparators(for range: NSRange, panel: CGRect, rows: [TableRow]) {
         style.palette.divider.platformColor.setFill()
-        storage.enumerateAttribute(.inkstoneTableSeparator, in: range) { value, pipe, _ in
+        storage.enumerateAttribute(.avenraTableSeparator, in: range) { value, pipe, _ in
             guard value != nil else { return }
             let glyphRange = layoutManager.glyphRange(forCharacterRange: pipe, actualCharacterRange: nil)
             guard glyphRange.length > 0 else { return }
@@ -443,7 +443,7 @@ struct EditorRenderer {
     /// source was concealed and its replacement never arrived.
     func drawInlineImages(in rect: CGRect) {
         storage.enumerateAttribute(
-            .inkstoneInlineImage,
+            .avenraInlineImage,
             in: NSRange(location: 0, length: storage.length)
         ) { value, range, _ in
             guard let image = value as? PlatformImage else { return }
@@ -456,7 +456,7 @@ struct EditorRenderer {
             // The paragraph is centred, but the glyphs it contains are collapsed
             // to nothing, so the line rect carries no useful x. Centre against
             // the text container instead.
-            let centred = (storage.attribute(.inkstoneImageCentred, at: range.location, effectiveRange: nil)
+            let centred = (storage.attribute(.avenraImageCentred, at: range.location, effectiveRange: nil)
                 as? Bool) ?? true
             let available = container.size.width - container.lineFragmentPadding * 2
             let x = centred ? origin.x + max(0, (available - size.width) / 2) : origin.x
@@ -647,7 +647,7 @@ struct EditorRenderer {
     /// characters the author did not type.
     func drawProperties(in rect: CGRect) {
         storage.enumerateAttribute(
-            .inkstoneProperties,
+            .avenraProperties,
             in: NSRange(location: 0, length: storage.length)
         ) { value, range, _ in
             guard let block = MainActor.assumeIsolated({ value as? PropertiesBlock }) else { return }
@@ -760,7 +760,7 @@ struct EditorRenderer {
         let width = container.size.width - container.lineFragmentPadding * 2
 
         storage.enumerateAttribute(
-            .inkstoneHorizontalRule,
+            .avenraHorizontalRule,
             in: NSRange(location: 0, length: storage.length)
         ) { value, range, _ in
             guard value != nil else { return }
@@ -782,7 +782,7 @@ struct EditorRenderer {
         // it floats outside the corner it is meant to sit in — and, because this
         // is also the hit test, becomes unclickable where it appears.
         if storage.length > range.location {
-            if storage.attribute(.inkstoneTableBlock, at: range.location, effectiveRange: nil) != nil {
+            if storage.attribute(.avenraTableBlock, at: range.location, effectiveRange: nil) != nil {
                 if let geometry = tableGeometry(for: range, outer: panel) { panel = geometry.panel }
             } else if let inked = blockInkPanel(for: range, outer: panel, padding: Self.blockPadding) {
                 panel = inked
@@ -803,7 +803,7 @@ struct EditorRenderer {
     func copyButtonHit(at point: CGPoint) -> NSRange? {
         var hit: NSRange?
         storage.enumerateAttribute(
-            .inkstoneBlockFill,
+            .avenraBlockFill,
             in: NSRange(location: 0, length: storage.length)
         ) { value, range, stop in
             guard value != nil, let button = copyButtonRect(for: range) else { return }
@@ -906,15 +906,15 @@ struct EditorRenderer {
     func drawInlineMath(in rect: CGRect) {
         // Two keys, one behaviour: a typeset formula and a thumbnail of an
         // embedded picture both have to sit on the baseline among the words.
-        drawOnBaseline(.inkstoneInlineMath, in: rect)
-        drawOnBaseline(.inkstoneInlineThumbnail, in: rect)
+        drawOnBaseline(.avenraInlineMath, in: rect)
+        drawOnBaseline(.avenraInlineThumbnail, in: rect)
         drawInlineText(in: rect)
     }
 
     /// Draws the character an entity stands for, where its source was concealed.
     private func drawInlineText(in rect: CGRect) {
         storage.enumerateAttribute(
-            .inkstoneInlineText,
+            .avenraInlineText,
             in: NSRange(location: 0, length: storage.length)
         ) { value, range, _ in
             guard let replacement = value as? String else { return }
@@ -983,7 +983,7 @@ struct EditorRenderer {
         let width = container.size.width - container.lineFragmentPadding * 2
 
         storage.enumerateAttribute(
-            .inkstoneHeadingRule,
+            .avenraHeadingRule,
             in: NSRange(location: 0, length: storage.length)
         ) { value, range, _ in
             guard value != nil else { return }
@@ -1034,7 +1034,7 @@ struct EditorRenderer {
     /// here allows a box sized to the font and rounded like a chip.
     func drawInlineFills(in rect: CGRect) {
         storage.enumerateAttribute(
-            .inkstoneInlineFill,
+            .avenraInlineFill,
             in: NSRange(location: 0, length: storage.length)
         ) { value, range, _ in
             guard let colour = value as? PlatformColor, range.length > 0 else { return }
@@ -1110,7 +1110,7 @@ struct EditorRenderer {
 
     func drawCheckboxes(in rect: CGRect) {
         storage.enumerateAttribute(
-            .inkstoneCheckbox,
+            .avenraCheckbox,
             in: NSRange(location: 0, length: storage.length)
         ) { value, range, _ in
             // A `String` now, not a `Bool`: the box has to show *which* state.
@@ -1217,7 +1217,7 @@ struct EditorRenderer {
     func checkboxHit(at point: CGPoint) -> NSRange? {
         var hit: NSRange?
         storage.enumerateAttribute(
-            .inkstoneCheckbox,
+            .avenraCheckbox,
             in: NSRange(location: 0, length: storage.length)
         ) { value, range, stop in
             guard value != nil, let box = checkboxBox(for: range) else { return }
@@ -1239,7 +1239,7 @@ struct EditorRenderer {
         let colour = style.palette.faintText.platformColor
 
         storage.enumerateAttribute(
-            .inkstoneBullet,
+            .avenraBullet,
             in: NSRange(location: 0, length: storage.length)
         ) { value, range, _ in
             guard let level = value as? Int else { return }
@@ -1289,7 +1289,7 @@ struct EditorRenderer {
         let colour = style.palette.divider.platformColor
 
         storage.enumerateAttribute(
-            .inkstoneQuoteDepth,
+            .avenraQuoteDepth,
             in: NSRange(location: 0, length: storage.length)
         ) { value, range, _ in
             guard let depth = value as? Int else { return }
