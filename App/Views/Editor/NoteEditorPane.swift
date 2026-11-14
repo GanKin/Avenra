@@ -246,7 +246,7 @@ struct InspectorView: View {
         if settings.data.assistant.isEnabled {
             VStack(spacing: 0) {
                 Picker("", selection: $tab) {
-                    Text("Note").tag(Tab.inspector)
+                    Text(isInspectingEPUB ? "Outline" : "Note").tag(Tab.inspector)
                     Text("Assistant").tag(Tab.assistant)
                 }
                 .pickerStyle(.segmented)
@@ -270,14 +270,41 @@ struct InspectorView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            // Opening a book should surface its outline, not leave the Assistant
+            // half selected from a previous note.
+            .onChange(of: workspace.epubOutline?.url) { _, url in
+                if url != nil { tab = .inspector }
+            }
         } else {
             inspectorContent
         }
     }
 
+    /// The tab the inspector describes — the focused pane's active tab, so an
+    /// EPUB open on either side of a split still gets its outline.
+    private var inspectedTab: TabContent? {
+        workspace.focusedPane == .secondary
+            ? workspace.secondaryActiveTab
+            : workspace.activeTab
+    }
+
+    private var isInspectingEPUB: Bool {
+        if workspace.epubOutline != nil { return true }
+        if case .attachment(_, let kind) = inspectedTab { return kind == .epub }
+        return false
+    }
+
     @ViewBuilder
     private var inspectorContent: some View {
-        if let url = workspace.activeTab?.url, let note = workspace.index.metadata(for: url) {
+        // Prefer a published outline whenever that EPUB is still open in either
+        // pane — requiring the focused pane to match left the inspector blank
+        // when focus had drifted.
+        if let outline = workspace.epubOutline,
+           [workspace.activeTab?.url, workspace.secondaryActiveTab?.url].contains(outline.url) {
+            EPUBOutlineList(url: outline.url, title: outline.title, chapters: outline.chapters)
+        } else if case .attachment(let url, let kind) = inspectedTab, kind == .epub {
+            EPUBOutlineInspector(url: url)
+        } else if let url = inspectedTab?.url, let note = workspace.index.metadata(for: url) {
             List {
                 if !note.frontmatter.properties.isEmpty {
                     Section(String(localized: "Properties")) {
@@ -384,6 +411,95 @@ struct InspectorView: View {
         case .list(let items): return items.compactMap(\.stringValue).joined(separator: ", ")
         default: return value.stringValue ?? ""
         }
+    }
+}
+
+/// Loads an EPUB outline when the reader has not published one yet.
+private struct EPUBOutlineInspector: View {
+    let url: URL
+
+    @Environment(Workspace.self) private var workspace
+    @State private var title = ""
+    @State private var chapters: [EPUBChapter] = []
+    @State private var failed = false
+    @State private var loading = true
+
+    var body: some View {
+        Group {
+            if let outline = workspace.epubOutline, outline.url == url {
+                EPUBOutlineList(url: url, title: outline.title, chapters: outline.chapters)
+            } else if loading {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if failed {
+                ContentUnavailableView(
+                    "Could not read outline",
+                    systemImage: "book.closed",
+                    description: Text("The EPUB opened, but its table of contents could not be loaded.")
+                )
+            } else {
+                EPUBOutlineList(url: url, title: title, chapters: chapters)
+            }
+        }
+        .task(id: url) {
+            loading = true
+            failed = false
+            do {
+                let book = try await Task.detached(priority: .utility) {
+                    try EPUBDocument.open(url)
+                }.value
+                title = book.title
+                chapters = book.chapters
+                workspace.setEPUBOutline(url: url, title: book.title, chapters: book.chapters)
+                failed = false
+            } catch {
+                failed = true
+            }
+            loading = false
+        }
+    }
+}
+
+/// Shared chapter list used by the inspector (and ready for the sidebar outline).
+struct EPUBOutlineList: View {
+    let url: URL
+    let title: String
+    let chapters: [EPUBChapter]
+
+    @Environment(Workspace.self) private var workspace
+    @Environment(\.style) private var style
+
+    var body: some View {
+        List {
+            if !title.isEmpty {
+                Section {
+                    Text(title)
+                        .font(style.uiFont.weight(.medium))
+                        .foregroundStyle(style.text)
+                }
+            }
+            Section(String(localized: "Outline")) {
+                if chapters.isEmpty {
+                    Text("No chapters")
+                        .font(.caption)
+                        .foregroundStyle(style.faintText)
+                } else {
+                    ForEach(Array(chapters.enumerated()), id: \.element.id) { index, chapter in
+                        Button {
+                            workspace.revealEPUBChapter(index, in: url)
+                        } label: {
+                            Text(chapter.title)
+                                .font(style.uiFont)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .foregroundStyle(style.text)
+                                .contentShape(.rect)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+        }
+        .listStyle(.sidebar)
     }
 }
 

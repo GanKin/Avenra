@@ -11,6 +11,7 @@ public enum AttachmentKind: String, Codable, Hashable, Sendable, CaseIterable {
     case audio
     case pdf
     case html
+    case epub
     case other
 
     public init(pathExtension: String) {
@@ -25,6 +26,8 @@ public enum AttachmentKind: String, Codable, Hashable, Sendable, CaseIterable {
             self = .pdf
         case "html", "htm":
             self = .html
+        case "epub":
+            self = .epub
         default:
             self = .other
         }
@@ -202,7 +205,7 @@ public struct SyncFilePolicy: Codable, Hashable, Sendable {
         case .audio: return syncsAudio
         case .pdf: return syncsPDFs
         case .video: return syncsVideos
-        case .html, .other: return syncsOtherFiles
+        case .html, .epub, .other: return syncsOtherFiles
         }
     }
 
@@ -212,7 +215,7 @@ public struct SyncFilePolicy: Codable, Hashable, Sendable {
         case .audio: syncsAudio = enabled
         case .pdf: syncsPDFs = enabled
         case .video: syncsVideos = enabled
-        case .html, .other: syncsOtherFiles = enabled
+        case .html, .epub, .other: syncsOtherFiles = enabled
         }
     }
 

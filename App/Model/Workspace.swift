@@ -158,7 +158,24 @@ final class Workspace {
         let token: Int
     }
 
+    /// Scroll target inside an open EPUB's continuous reader.
+    struct EPUBRevealTarget: Equatable {
+        let url: URL
+        let chapterIndex: Int
+        let token: Int
+    }
+
+    /// Chapters for the EPUB currently shown in the reader — the inspector and
+    /// the sidebar outline read this instead of opening the book a second time.
+    struct EPUBOutlineState: Equatable {
+        let url: URL
+        let title: String
+        let chapters: [EPUBChapter]
+    }
+
     private(set) var revealTarget: RevealTarget?
+    private(set) var epubRevealTarget: EPUBRevealTarget?
+    private(set) var epubOutline: EPUBOutlineState?
     private var revealToken = 0
 
     /// A request to find a file in the sidebar's tree: expand every folder above
@@ -193,6 +210,30 @@ final class Workspace {
         revealTarget = RevealTarget(url: url, range: range, token: revealToken)
     }
 
+    /// Scrolls the EPUB reader to a spine chapter, opening the book first if needed.
+    func revealEPUBChapter(_ index: Int, in url: URL) {
+        if activeTab?.url != url { openNote(at: url) }
+        revealToken += 1
+        epubRevealTarget = EPUBRevealTarget(url: url, chapterIndex: index, token: revealToken)
+    }
+
+    /// Publishes the open book's outline for the right-hand inspector.
+    func setEPUBOutline(url: URL, title: String, chapters: [EPUBChapter]) {
+        epubOutline = EPUBOutlineState(url: url, title: title, chapters: chapters)
+    }
+
+    /// Drops a published outline when its reader leaves the screen.
+    func clearEPUBOutline(for url: URL) {
+        if epubOutline?.url == url { epubOutline = nil }
+    }
+
+    /// Forgets the outline once neither pane is showing that EPUB.
+    private func pruneEPUBOutlineIfNeeded() {
+        guard let outline = epubOutline else { return }
+        let stillOpen = [activeTab?.url, secondaryActiveTab?.url].contains(outline.url)
+        if !stillOpen { epubOutline = nil }
+    }
+
     /// Which of the two panes new work goes to.
     ///
     /// macOS only. A split on a phone is two half-columns of text, and Obsidian
@@ -205,7 +246,9 @@ final class Workspace {
     /// appears when something is sent to it and disappears when its last tab
     /// closes, so there is never an empty half of the window to explain.
     var secondaryTabs: [TabContent] = []
-    var secondaryActiveTab: TabContent?
+    var secondaryActiveTab: TabContent? {
+        didSet { pruneEPUBOutlineIfNeeded() }
+    }
 
     /// Where an ordinary open lands. Follows the last pane the user touched, so
     /// clicking a link in the right-hand pane opens beside it rather than
@@ -215,6 +258,7 @@ final class Workspace {
     var isSplit: Bool { !secondaryTabs.isEmpty }
     var activeTab: TabContent? {
         didSet {
+            pruneEPUBOutlineIfNeeded()
             guard let activeTab, activeTab != oldValue else { return }
             pushHistory(activeTab)
         }

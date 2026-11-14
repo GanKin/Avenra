@@ -40,7 +40,7 @@ public struct VaultScanner: Sendable {
     public static let visibleExtensions: Set<String> = [
         "md", "markdown", "canvas",
         "png", "jpg", "jpeg", "gif", "webp", "heic", "svg",
-        "pdf", "html", "htm", "mp3", "m4a", "wav", "mp4", "mov",
+        "pdf", "html", "htm", "epub", "mp3", "m4a", "wav", "mp4", "mov",
     ]
 
     public init() {}

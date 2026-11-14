@@ -23,6 +23,7 @@ struct FileOpeningTests {
         #expect(decide("Paper.pdf") == .preview(.pdf))
         #expect(decide("page.html") == .preview(.html))
         #expect(decide("Index.HTM") == .preview(.html))
+        #expect(decide("Novel.epub") == .preview(.epub))
         #expect(decide("Map.canvas") == .canvas)
     }
 

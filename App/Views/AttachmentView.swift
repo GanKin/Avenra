@@ -25,6 +25,7 @@ struct AttachmentView: View {
             case .image: image
             case .pdf: PDFPreview(url: url)
             case .html: HTMLPreview(url: url)
+            case .epub: EPUBPreview(url: url)
             case .audio, .video: VideoPlayer(player: AVPlayer(url: url))
             case .other: unsupported
             }
@@ -174,6 +175,9 @@ extension HTMLPreview {
 
     final class Coordinator: NSObject, WKNavigationDelegate {
         var rootDirectory: URL
+        /// EPUB outline jump waiting for the continuous page to finish loading.
+        var pendingEPUBReveal: Workspace.EPUBRevealTarget?
+        private var appliedEPUBRevealToken = 0
 
         init(rootDirectory: URL) {
             self.rootDirectory = rootDirectory
@@ -217,9 +221,166 @@ extension HTMLPreview {
             decisionHandler(.cancel)
         }
 
+        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            if let pending = pendingEPUBReveal {
+                applyEPUBReveal(pending, in: webView)
+            }
+        }
+
+        func applyEPUBReveal(_ reveal: Workspace.EPUBRevealTarget?, in webView: WKWebView) {
+            guard let reveal, reveal.token != appliedEPUBRevealToken else { return }
+            let anchor = EPUBDocument.anchorID(forChapterIndex: reveal.chapterIndex)
+            let js = """
+            (function(){
+              var el = document.getElementById('\(anchor)');
+              if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+            })();
+            """
+            webView.evaluateJavaScript(js) { [weak self] _, error in
+                if error == nil {
+                    self?.appliedEPUBRevealToken = reveal.token
+                    self?.pendingEPUBReveal = nil
+                }
+            }
+        }
+
         private static func isHTTP(_ url: URL) -> Bool {
             guard let scheme = url.scheme?.lowercased() else { return false }
             return scheme == "http" || scheme == "https"
         }
+    }
+}
+
+/// Read-only EPUB as one continuous scroll, with outline jumps from the inspector.
+private struct EPUBPreview: View {
+    let url: URL
+
+    @Environment(Workspace.self) private var workspace
+    @Environment(\.style) private var style
+    @State private var readerURL: URL?
+    @State private var rootDirectory: URL?
+    @State private var error: EPUBDocument.OpenError?
+
+    var body: some View {
+        Group {
+            if let readerURL, let rootDirectory {
+                EPUBWebView(
+                    readerURL: readerURL,
+                    rootDirectory: rootDirectory,
+                    reveal: workspace.epubRevealTarget?.url == url
+                        ? workspace.epubRevealTarget : nil
+                )
+            } else if let error {
+                failure(error)
+            } else {
+                ProgressView()
+            }
+        }
+        .task(id: url) { await open() }
+    }
+
+    @MainActor
+    private func open() async {
+        readerURL = nil
+        rootDirectory = nil
+        error = nil
+        do {
+            let prepared = try await Task.detached(priority: .userInitiated) {
+                let book = try EPUBDocument.open(url)
+                let reader = try book.continuousReaderURL()
+                return (book, reader)
+            }.value
+            let book = prepared.0
+            readerURL = prepared.1
+            rootDirectory = book.rootDirectory
+            workspace.setEPUBOutline(url: url, title: book.title, chapters: book.chapters)
+        } catch let openError as EPUBDocument.OpenError {
+            error = openError
+        } catch {
+            self.error = .notAZip
+        }
+    }
+
+    private func failure(_ error: EPUBDocument.OpenError) -> some View {
+        let message: String = switch error {
+        case .encrypted: String(localized: "This EPUB is encrypted and cannot be opened.")
+        case .notAZip: String(localized: "This file is not a valid EPUB archive.")
+        case .missingContainer, .missingPackage: String(localized: "This EPUB is missing its package metadata.")
+        case .emptySpine: String(localized: "This EPUB has no readable chapters.")
+        }
+        return VStack(spacing: 14) {
+            Image(systemName: "book.closed")
+                .font(.system(size: 34, weight: .light))
+                .foregroundStyle(style.faintText)
+            Text(url.lastPathComponent)
+                .font(style.uiFont.weight(.medium))
+                .foregroundStyle(style.text)
+            Text(message)
+                .font(style.uiFont)
+                .foregroundStyle(style.secondaryText)
+                .multilineTextAlignment(.center)
+        }
+        .padding(40)
+    }
+}
+
+private struct EPUBWebView {
+    let readerURL: URL
+    let rootDirectory: URL
+    let reveal: Workspace.EPUBRevealTarget?
+}
+
+#if os(macOS)
+extension EPUBWebView: NSViewRepresentable {
+    func makeNSView(context: Context) -> WKWebView {
+        let view = WKWebView(frame: .zero, configuration: HTMLPreview.sharedConfiguration())
+        view.navigationDelegate = context.coordinator
+        load(view, coordinator: context.coordinator)
+        return view
+    }
+
+    func updateNSView(_ view: WKWebView, context: Context) {
+        context.coordinator.rootDirectory = rootDirectory
+        load(view, coordinator: context.coordinator)
+    }
+
+    func makeCoordinator() -> HTMLPreview.Coordinator {
+        HTMLPreview.Coordinator(rootDirectory: rootDirectory)
+    }
+}
+#else
+extension EPUBWebView: UIViewRepresentable {
+    func makeUIView(context: Context) -> WKWebView {
+        let view = WKWebView(frame: .zero, configuration: HTMLPreview.sharedConfiguration())
+        view.navigationDelegate = context.coordinator
+        load(view, coordinator: context.coordinator)
+        return view
+    }
+
+    func updateUIView(_ view: WKWebView, context: Context) {
+        context.coordinator.rootDirectory = rootDirectory
+        load(view, coordinator: context.coordinator)
+    }
+
+    func makeCoordinator() -> HTMLPreview.Coordinator {
+        HTMLPreview.Coordinator(rootDirectory: rootDirectory)
+    }
+}
+#endif
+
+extension EPUBWebView {
+    fileprivate func load(_ view: WKWebView, coordinator: HTMLPreview.Coordinator) {
+        coordinator.pendingEPUBReveal = reveal
+        if view.url == readerURL {
+            coordinator.applyEPUBReveal(reveal, in: view)
+        } else {
+            view.loadFileURL(readerURL, allowingReadAccessTo: rootDirectory)
+        }
+    }
+}
+
+extension HTMLPreview {
+    fileprivate static func sharedConfiguration() -> WKWebViewConfiguration {
+        configuration()
     }
 }

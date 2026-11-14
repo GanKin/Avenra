@@ -464,6 +464,7 @@ private struct FileRow: View {
         case "png", "jpg", "jpeg", "gif", "webp", "heic", "svg": return "photo"
         case "pdf": return "doc.richtext"
         case "html", "htm": return "globe"
+        case "epub": return "book"
         case "mp3", "m4a", "wav": return "waveform"
         case "mp4", "mov": return "film"
         default: return "doc"
@@ -723,8 +724,17 @@ struct OutlinePane: View {
     @Environment(Workspace.self) private var workspace
     @Environment(\.style) private var style
 
+    private var inspectedTab: TabContent? {
+        workspace.focusedPane == .secondary
+            ? workspace.secondaryActiveTab
+            : workspace.activeTab
+    }
+
     var body: some View {
-        if let url = workspace.activeTab?.url,
+        if let outline = workspace.epubOutline,
+           [workspace.activeTab?.url, workspace.secondaryActiveTab?.url].contains(outline.url) {
+            EPUBOutlineList(url: outline.url, title: outline.title, chapters: outline.chapters)
+        } else if let url = inspectedTab?.url,
            let note = workspace.index.metadata(for: url),
            !note.headings.isEmpty {
             List(note.headings, id: \.range.location) { heading in

@@ -21,6 +21,8 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-markdown.git", branch: "main"),
         // YAML parsing for note frontmatter.
         .package(url: "https://github.com/jpsim/Yams.git", from: "5.1.0"),
+        // EPUB is a ZIP of XHTML; Foundation has no archive reader.
+        .package(url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.19"),
     ],
     targets: [
         .target(
@@ -28,6 +30,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Markdown", package: "swift-markdown"),
                 "Yams",
+                .product(name: "ZIPFoundation", package: "ZIPFoundation"),
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
@@ -38,7 +41,10 @@ let package = Package(
         ),
         .testTarget(
             name: "AvenraCoreTests",
-            dependencies: ["AvenraCore"],
+            dependencies: [
+                "AvenraCore",
+                .product(name: "ZIPFoundation", package: "ZIPFoundation"),
+            ],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
     ]
