@@ -25,12 +25,17 @@ struct EPUBDocumentTests {
         defer { try? FileManager.default.removeItem(at: url.deletingLastPathComponent()) }
 
         let book = try EPUBDocument.open(url)
-        let reader = try book.continuousReaderURL()
+        var settings = EPUBReadingSettings()
+        settings.fontSize = 20
+        settings.paragraphSpacing = 18
+        let reader = try book.continuousReaderURL(settings: settings)
         let html = try String(contentsOf: reader, encoding: .utf8)
         #expect(html.contains(EPUBDocument.anchorID(forChapterIndex: 0)))
         #expect(html.contains(EPUBDocument.anchorID(forChapterIndex: 1)))
         #expect(html.contains("One"))
         #expect(html.contains("Two"))
+        #expect(html.contains("20.00pt"))
+        #expect(html.contains("18.00pt"))
     }
 
     @Test("An encrypted EPUB is refused")

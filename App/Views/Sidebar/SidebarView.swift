@@ -79,12 +79,24 @@ struct SidebarView: View {
     }
 }
 
+/// Shared insets so the vault cloud and the Files tab sit on one vertical axis.
+///
+/// Leading inset is applied by the *parent* of each row, never inside a `Menu`
+/// label: macOS's borderless menu style ignores or fights padding on the label
+/// itself, which is why matching numbers still left the cloud left of the folder.
+private enum SidebarChrome {
+    static let leadingInset: CGFloat = 10
+    static let iconSlot: CGFloat = 22
+}
+
 private struct VaultSwitcher: View {
     @Environment(Workspace.self) private var workspace
     @Environment(\.style) private var style
     @State private var isPickingFolder = false
 
     var body: some View {
+        // The label *is* the hit target. An earlier clear-overlay Menu looked
+        // right but swallowed clicks on macOS — switching vaults stopped working.
         Menu {
             ForEach(workspace.registry.vaults) { vault in
                 Button {
@@ -115,24 +127,40 @@ private struct VaultSwitcher: View {
                 }
             }
         } label: {
-            HStack(spacing: 6) {
+            HStack(spacing: 0) {
                 Image(systemName: workspace.vault?.isCloudBacked == true ? "icloud" : "folder")
+                    .font(style.uiIcon(1.0))
+                    .frame(width: SidebarChrome.iconSlot, height: SidebarChrome.iconSlot)
                 Text(workspace.vault?.name ?? String(localized: "No Vault"))
+                    .font(style.uiFont.weight(.medium))
                     .lineLimit(1)
-                Spacer()
+                    .padding(.leading, 6)
                 if workspace.isIndexing {
-                    ProgressView().controlSize(.mini)
+                    ProgressView()
+                        .controlSize(.mini)
+                        .padding(.leading, 4)
                 } else {
-                    Image(systemName: "chevron.up.chevron.down").font(.caption2)
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 8, weight: .semibold))
+                        .foregroundStyle(style.secondaryText)
+                        .padding(.leading, 4)
                 }
+                Spacer(minLength: 0)
             }
-            .font(style.uiFont.weight(.medium))
             .foregroundStyle(style.text)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 9)
+            .padding(.top, 9)
+            .padding(.trailing, SidebarChrome.leadingInset)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(.rect)
         }
         .menuStyle(.borderlessButton)
+        .menuIndicator(.hidden)
+        // Leading inset on the Menu (not the label): keeps the cloud on the
+        // same axis as the folder tab without AppKit eating label padding.
+        .padding(.leading, SidebarChrome.leadingInset)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityLabel(Text(workspace.vault?.name ?? String(localized: "No Vault")))
+        .accessibilityHint(Text("Switch vault"))
         .fileImporter(isPresented: $isPickingFolder, allowedContentTypes: [.folder]) { result in
             guard case .success(let url) = result else { return }
             // The picker hands back a security-scoped URL; open the scope before
@@ -158,19 +186,24 @@ private struct SectionPicker: View {
                 } label: {
                     Image(systemName: icon(for: section))
                         .font(style.uiIcon(1.0))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 6)
+                        .frame(width: SidebarChrome.iconSlot, height: SidebarChrome.iconSlot)
                         .foregroundStyle(selection == section ? style.accent : style.secondaryText)
                         .background(
                             RoundedRectangle(cornerRadius: 6)
                                 .fill(selection == section ? style.background : .clear)
                         )
+                        .contentShape(.rect)
                 }
                 .buttonStyle(.plain)
                 .help(label(for: section))
             }
+            Spacer(minLength: 0)
         }
-        .padding(.horizontal, 8)
+        .padding(.leading, SidebarChrome.leadingInset)
+        .padding(.trailing, SidebarChrome.leadingInset)
+        // 12pt under the vault name row — previously collapsed into the
+        // switcher's own bottom padding and read as cramped.
+        .padding(.top, 12)
         .padding(.bottom, 8)
     }
 
@@ -222,6 +255,9 @@ struct FileTreeView: View {
                         }
                     }
                 }
+                // ScrollView centres content that is narrower than the pane;
+                // stretch the stack so folder/file rows stay flush left.
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, 6)
             }
             .scrollIndicators(.automatic)
@@ -322,6 +358,7 @@ private struct FileRow: View {
             }
             Spacer(minLength: 0)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.leading, CGFloat(depth) * 12 + 10)
         .padding(.trailing, 8)
         .padding(.vertical, 3)
@@ -708,11 +745,23 @@ struct UnresolvedLinksView: View {
         .listStyle(.sidebar)
         .overlay {
             if workspace.index.unresolved.isEmpty {
-                ContentUnavailableView(
-                    "No unresolved links",
-                    systemImage: "link",
-                    description: Text("Every link in this vault points at a note that exists.")
-                )
+                // Match BookmarksPane: ContentUnavailableView floats a card in
+                // this narrow column and reads as a layout break.
+                VStack(spacing: 6) {
+                    Image(systemName: "link")
+                        .font(.system(size: 20, weight: .light))
+                        .foregroundStyle(style.faintText)
+                    Text("No unresolved links")
+                        .font(style.uiFont)
+                        .foregroundStyle(style.secondaryText)
+                    Text("Every link in this vault points at a note that exists.")
+                        .font(style.uiFont)
+                        .foregroundStyle(style.faintText)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.horizontal, 16)
+                .background(style.secondaryBackground)
             }
         }
     }
@@ -754,11 +803,22 @@ struct OutlinePane: View {
             }
             .listStyle(.sidebar)
         } else {
-            ContentUnavailableView(
-                "No outline",
-                systemImage: "list.bullet.indent",
-                description: Text("Headings in the open note appear here.")
-            )
+            // Same compact empty state as BookmarksPane — ContentUnavailableView
+            // draws a floating card that looks broken in a narrow sidebar column.
+            VStack(spacing: 6) {
+                Image(systemName: "list.bullet.indent")
+                    .font(.system(size: 20, weight: .light))
+                    .foregroundStyle(style.faintText)
+                Text("No outline")
+                    .font(style.uiFont)
+                    .foregroundStyle(style.secondaryText)
+                Text("Headings in the open note appear here.")
+                    .font(style.uiFont)
+                    .foregroundStyle(style.faintText)
+                    .multilineTextAlignment(.center)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(.horizontal, 16)
         }
     }
 }

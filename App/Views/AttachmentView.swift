@@ -178,6 +178,7 @@ extension HTMLPreview {
         /// EPUB outline jump waiting for the continuous page to finish loading.
         var pendingEPUBReveal: Workspace.EPUBRevealTarget?
         private var appliedEPUBRevealToken = 0
+        var loadedEPUBReloadToken: Int?
 
         init(rootDirectory: URL) {
             self.rootDirectory = rootDirectory
@@ -261,12 +262,17 @@ private struct EPUBPreview: View {
     @State private var rootDirectory: URL?
     @State private var error: EPUBDocument.OpenError?
 
+    private var readingSettings: EPUBReadingSettings {
+        workspace.settings.data.epubReading
+    }
+
     var body: some View {
         Group {
             if let readerURL, let rootDirectory {
                 EPUBWebView(
                     readerURL: readerURL,
                     rootDirectory: rootDirectory,
+                    reloadToken: readingSettings.hashValue,
                     reveal: workspace.epubRevealTarget?.url == url
                         ? workspace.epubRevealTarget : nil
                 )
@@ -276,28 +282,40 @@ private struct EPUBPreview: View {
                 ProgressView()
             }
         }
-        .task(id: url) { await open() }
+        // Rebuild when the file changes *or* reading preferences do, so the
+        // Settings → EPUB steppers take effect without closing the book.
+        .task(id: readerTaskID) { await open() }
+    }
+
+    private var readerTaskID: String {
+        "\(url.path)|\(readingSettings.hashValue)"
     }
 
     @MainActor
     private func open() async {
-        readerURL = nil
-        rootDirectory = nil
-        error = nil
+        let settings = readingSettings
+        // Keep the current page on screen while preferences rebuild the HTML;
+        // only the first open (or a failed previous open) shows a spinner.
+        if readerURL == nil { error = nil }
         do {
             let prepared = try await Task.detached(priority: .userInitiated) {
                 let book = try EPUBDocument.open(url)
-                let reader = try book.continuousReaderURL()
+                let reader = try book.continuousReaderURL(settings: settings)
                 return (book, reader)
             }.value
             let book = prepared.0
             readerURL = prepared.1
             rootDirectory = book.rootDirectory
             workspace.setEPUBOutline(url: url, title: book.title, chapters: book.chapters)
+            error = nil
         } catch let openError as EPUBDocument.OpenError {
             error = openError
+            readerURL = nil
+            rootDirectory = nil
         } catch {
             self.error = .notAZip
+            readerURL = nil
+            rootDirectory = nil
         }
     }
 
@@ -327,6 +345,8 @@ private struct EPUBPreview: View {
 private struct EPUBWebView {
     let readerURL: URL
     let rootDirectory: URL
+    /// Changes when reading preferences rewrite the same on-disk HTML path.
+    let reloadToken: Int
     let reveal: Workspace.EPUBRevealTarget?
 }
 
@@ -371,9 +391,12 @@ extension EPUBWebView: UIViewRepresentable {
 extension EPUBWebView {
     fileprivate func load(_ view: WKWebView, coordinator: HTMLPreview.Coordinator) {
         coordinator.pendingEPUBReveal = reveal
-        if view.url == readerURL {
+        let sameFile = view.url?.standardizedFileURL == readerURL.standardizedFileURL
+        let samePrefs = coordinator.loadedEPUBReloadToken == reloadToken
+        if sameFile, samePrefs {
             coordinator.applyEPUBReveal(reveal, in: view)
         } else {
+            coordinator.loadedEPUBReloadToken = reloadToken
             view.loadFileURL(readerURL, allowingReadAccessTo: rootDirectory)
         }
     }

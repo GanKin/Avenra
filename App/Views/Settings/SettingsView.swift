@@ -78,7 +78,7 @@ struct SettingsView: View {
     /// Both platforms use these: the Mac tags its tabs with them, iOS pushes
     /// them onto a navigation path.
     enum Pane: String, CaseIterable, Identifiable, Hashable {
-        case appearance, typography, editor, files, assistant, sync
+        case appearance, typography, editor, files, assistant, sync, epub
 
         var id: String { rawValue }
 
@@ -90,6 +90,7 @@ struct SettingsView: View {
             case .files: return "Files & Links"
             case .assistant: return "Assistant"
             case .sync: return "Sync"
+            case .epub: return "EPUB"
             }
         }
 
@@ -101,6 +102,7 @@ struct SettingsView: View {
             case .files: return "folder"
             case .assistant: return "sparkles"
             case .sync: return "arrow.triangle.2.circlepath"
+            case .epub: return "book"
             }
         }
 
@@ -112,6 +114,7 @@ struct SettingsView: View {
             case .files: FilesSettings()
             case .assistant: AssistantSettingsPane()
             case .sync: SyncSettings()
+            case .epub: EPUBSettingsPane()
             }
         }
     }
@@ -260,6 +263,67 @@ private struct TypographySettings: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Toggle("Compress full-width punctuation", isOn: $settings.data.typography.cjkPunctuationCompression)
+            }
+        }
+        .formStyle(.grouped)
+    }
+}
+
+private struct EPUBSettingsPane: View {
+    @Environment(Workspace.self) private var workspace
+
+    var body: some View {
+        @Bindable var settings = workspace.settings
+
+        Form {
+            Section {
+                FontPicker(
+                    title: String(localized: "Font"),
+                    selection: $settings.data.epubReading.font,
+                    suggestions: Typography.recommendedCJKFonts
+                )
+                LabeledStepper(
+                    title: String(localized: "Size"),
+                    value: $settings.data.epubReading.fontSize,
+                    range: 12...32,
+                    step: 0.5,
+                    format: "%.1f pt"
+                )
+                LabeledStepper(
+                    title: String(localized: "Line height"),
+                    value: $settings.data.epubReading.lineHeightMultiple,
+                    range: 1.2...2.6,
+                    step: 0.05,
+                    format: "%.2f×"
+                )
+                LabeledStepper(
+                    title: String(localized: "Paragraph spacing"),
+                    value: $settings.data.epubReading.paragraphSpacing,
+                    range: 0...36,
+                    step: 1,
+                    format: "%.0f pt"
+                )
+                LabeledStepper(
+                    title: String(localized: "Letter spacing"),
+                    value: $settings.data.epubReading.letterSpacing,
+                    range: -1...4,
+                    step: 0.1,
+                    format: "%.1f pt"
+                )
+            } header: {
+                Text("Reading")
+            } footer: {
+                Text("Applies to EPUB files opened in Avenra. Notes keep their own Typography settings.")
+            }
+
+            Section("Layout") {
+                LabeledStepper(
+                    title: String(localized: "Max line width"),
+                    value: $settings.data.epubReading.maxWidth,
+                    range: 400...1000,
+                    step: 20,
+                    format: "%.0f pt"
+                )
             }
         }
         .formStyle(.grouped)

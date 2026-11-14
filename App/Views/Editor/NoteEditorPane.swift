@@ -174,8 +174,12 @@ struct NoteEditorPane: View {
             workspace.settings.data.editorMode = target
         } label: {
             Image(systemName: symbol)
-                .font(.system(size: 12))
-                .frame(width: 38, height: 22)
+                // Fixed point size + medium scale: SF Symbols like `eye` draw
+                // optically larger than `book` at the same font size, which made
+                // the active segment look like a UI bug rather than a toggle.
+                .font(.system(size: 11, weight: .medium))
+                .imageScale(.medium)
+                .frame(width: 28, height: 22)
                 .foregroundStyle(isActive ? Color.white : style.secondaryText)
                 .background(
                     RoundedRectangle(cornerRadius: 6)

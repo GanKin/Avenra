@@ -781,12 +781,33 @@ struct EditorRenderer {
         // fragments, so the button has to be placed against the same rectangle or
         // it floats outside the corner it is meant to sit in — and, because this
         // is also the hit test, becomes unclickable where it appears.
-        if storage.length > range.location {
-            if storage.attribute(.avenraTableBlock, at: range.location, effectiveRange: nil) != nil {
-                if let geometry = tableGeometry(for: range, outer: panel) { panel = geometry.panel }
-            } else if let inked = blockInkPanel(for: range, outer: panel, padding: Self.blockPadding) {
-                panel = inked
-            }
+        let isTable = storage.length > range.location
+            && storage.attribute(.avenraTableBlock, at: range.location, effectiveRange: nil) != nil
+        if isTable {
+            guard let geometry = tableGeometry(for: range, outer: panel) else { return nil }
+            panel = geometry.panel
+            // Sit inside the header row only — a 22pt chip overflowed short
+            // headers and straddled the first body row.
+            let headerTop = panel.minY
+            let headerBottom: CGFloat = {
+                guard geometry.rows.count > 1 else {
+                    return geometry.rows[0].bottom + geometry.halfGap
+                }
+                return (geometry.rows[0].bottom + geometry.rows[1].top) / 2
+            }()
+            let headerHeight = headerBottom - headerTop
+            let inset: CGFloat = 3
+            let side = min(14, max(10, headerHeight - 2 * inset))
+            return CGRect(
+                x: panel.maxX - side - inset,
+                y: headerTop + (headerHeight - side) / 2,
+                width: side,
+                height: side
+            )
+        }
+        if storage.length > range.location,
+           let inked = blockInkPanel(for: range, outer: panel, padding: Self.blockPadding) {
+            panel = inked
         }
         let side: CGFloat = 22
         let inset: CGFloat = 8
@@ -848,6 +869,12 @@ struct EditorRenderer {
             ? style.palette.accent.platformColor
             : (isHovered ? style.palette.text.platformColor : style.palette.faintText.platformColor)
 
+        // Proportions from the original 22pt chip, so a 14pt table button keeps
+        // the same silhouette instead of overflowing its corner with a full-size
+        // glyph.
+        let scale = button.width / 22
+        let radius = max(2.5, 5 * scale)
+
         // A solid ground first: the first line is kept clear of the button, but
         // a wrapped line or a wide table can still reach under it.
         if isHovered || isCopied {
@@ -855,16 +882,16 @@ struct EditorRenderer {
         } else {
             style.palette.codeBackground.platformColor.setFill()
         }
-        PlatformBezierPath(roundedRect: button, cornerRadius: 5).fill()
+        PlatformBezierPath(roundedRect: button, cornerRadius: radius).fill()
 
         if isCopied {
             // A tick, drawn rather than set from a font so it matches the mark it
             // replaces at any text size.
             let path = PlatformBezierPath()
-            path.move(to: CGPoint(x: button.minX + 5, y: button.midY))
-            path.addLine(to: CGPoint(x: button.minX + 9, y: button.midY + 4.5))
-            path.addLine(to: CGPoint(x: button.maxX - 5, y: button.midY - 5))
-            path.lineWidth = 2
+            path.move(to: CGPoint(x: button.minX + 5 * scale, y: button.midY))
+            path.addLine(to: CGPoint(x: button.minX + 9 * scale, y: button.midY + 4.5 * scale))
+            path.addLine(to: CGPoint(x: button.maxX - 5 * scale, y: button.midY - 5 * scale))
+            path.lineWidth = max(1.2, 2 * scale)
             path.lineCapStyle = .round
             path.lineJoinStyle = .round
             colour.setStroke()
@@ -875,11 +902,21 @@ struct EditorRenderer {
         // Two offset rounded rectangles: the universal "copy" mark, drawn rather
         // than set from a font so it matches the panel at any text size.
         colour.setStroke()
-        let back = CGRect(x: button.minX + 5, y: button.minY + 2, width: 11, height: 13)
-        let front = CGRect(x: button.minX + 2, y: button.minY + 6, width: 11, height: 13)
+        let sheetW = 11 * scale
+        let sheetH = 13 * scale
+        let back = CGRect(
+            x: button.minX + 5 * scale, y: button.minY + 2 * scale,
+            width: sheetW, height: sheetH
+        )
+        let front = CGRect(
+            x: button.minX + 2 * scale, y: button.minY + 6 * scale,
+            width: sheetW, height: sheetH
+        )
+        let sheetRadius = max(1.2, 2 * scale)
+        let stroke = max(0.8, 1.2 * scale)
 
-        let backPath = PlatformBezierPath(roundedRect: back, cornerRadius: 2)
-        backPath.lineWidth = 1.2
+        let backPath = PlatformBezierPath(roundedRect: back, cornerRadius: sheetRadius)
+        backPath.lineWidth = stroke
         backPath.stroke()
 
         // Punch the ground through behind the front sheet so the two read as
@@ -889,11 +926,14 @@ struct EditorRenderer {
         } else {
             style.palette.codeBackground.platformColor.setFill()
         }
-        PlatformBezierPath(roundedRect: front.insetBy(dx: -1, dy: -1), cornerRadius: 3).fill()
+        PlatformBezierPath(
+            roundedRect: front.insetBy(dx: -scale, dy: -scale),
+            cornerRadius: max(1.5, 3 * scale)
+        ).fill()
 
         colour.setStroke()
-        let frontPath = PlatformBezierPath(roundedRect: front, cornerRadius: 2)
-        frontPath.lineWidth = 1.2
+        let frontPath = PlatformBezierPath(roundedRect: front, cornerRadius: sheetRadius)
+        frontPath.lineWidth = stroke
         frontPath.stroke()
     }
 

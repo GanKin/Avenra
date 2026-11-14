@@ -74,6 +74,8 @@ public struct SettingsData: Codable, Hashable, Sendable {
     public var appearance: AppearanceMode = .system
     public var themeID: String = Theme.avenra.id
     public var typography = Typography()
+    /// Font and measure for the EPUB reader — independent of note typography.
+    public var epubReading = EPUBReadingSettings()
     public var editorMode: EditorMode = .livePreview
 
     // Editor behaviour
@@ -272,6 +274,7 @@ public struct SettingsData: Codable, Hashable, Sendable {
         appearance = value(.appearance, defaults.appearance)
         themeID = value(.themeID, defaults.themeID)
         typography = value(.typography, defaults.typography)
+        epubReading = value(.epubReading, defaults.epubReading)
         editorMode = value(.editorMode, defaults.editorMode)
 
         showLineNumbers = value(.showLineNumbers, defaults.showLineNumbers)

@@ -92,7 +92,9 @@ public struct EPUBDocument: Sendable {
 
     /// One long HTML page that concatenates every spine item so reading is a
     /// single scroll, the way a webpage is. Written into the extract cache.
-    public func continuousReaderURL() throws -> URL {
+    public func continuousReaderURL(
+        settings: EPUBReadingSettings = EPUBReadingSettings()
+    ) throws -> URL {
         let reader = rootDirectory.appending(path: "avenra-reader.html")
         var stylesheets: [String] = []
         var seenSheets = Set<String>()
@@ -140,14 +142,8 @@ public struct EPUBDocument: Sendable {
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <title>\(title.addingHTMLAttributeEscapes)</title>
         \(sheetTags)
-        <style>
-          body { margin: 0 auto; padding: 1.5rem 1.25rem 4rem; max-width: 42rem;
-                 line-height: 1.6; font-size: 1.05rem; }
-          section[data-avenra-chapter] + section[data-avenra-chapter] {
-            margin-top: 2.5rem; padding-top: 2.5rem;
-            border-top: 1px solid rgba(127,127,127,0.35);
-          }
-          img, svg, video { max-width: 100%; height: auto; }
+        <style id="avenra-epub-reading">
+        \(settings.readerCSS)
         </style>
         </head>
         <body>
